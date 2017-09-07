@@ -14,10 +14,10 @@
 
 from tempest import config
 
-from senlin.tests.tempest import base
-from senlin.tests.tempest.common import clustering_client
-from senlin.tests.tempest.common import compute_client
-from senlin.tests.tempest.common import network_client
+from senlin_tempest_plugin import base
+from senlin_tempest_plugin.common import clustering_client
+from senlin_tempest_plugin.common import compute_client
+from senlin_tempest_plugin.common import network_client
 
 CONF = config.CONF
 

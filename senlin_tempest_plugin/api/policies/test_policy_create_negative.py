@@ -14,8 +14,8 @@ import copy
 from tempest.lib import decorators
 from tempest.lib import exceptions
 
-from senlin.tests.tempest.api import base
-from senlin.tests.tempest.common import constants
+from senlin_tempest_plugin.api import base
+from senlin_tempest_plugin.common import constants
 
 
 class TestPolicyCreateNegativeBadRequest(base.BaseSenlinAPITest):

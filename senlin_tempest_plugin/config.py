@@ -12,7 +12,6 @@
 # under the License.
 
 from oslo_config import cfg
-from senlin.common.i18n import _
 
 service_option = cfg.BoolOpt("senlin",
                              default=True,
@@ -25,8 +24,8 @@ clustering_group = cfg.OptGroup(name="clustering",
 ClusteringGroup = [
     cfg.StrOpt("catalog_type",
                default="clustering",
-               help=_("Catalog type of the clustering service.")),
+               help="Catalog type of the clustering service."),
     cfg.IntOpt("wait_timeout",
                default=60,
-               help=_("Waiting time for a specific status, in seconds."))
+               help="Waiting time for a specific status, in seconds.")
 ]

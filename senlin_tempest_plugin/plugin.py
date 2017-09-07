@@ -16,15 +16,15 @@ import os
 
 from tempest.test_discover import plugins
 
-from senlin.tests.tempest import config as config_senlin
+from senlin_tempest_plugin import config as config_senlin
 
 
 class SenlinTempestPlugin(plugins.TempestPlugin):
     def load_tests(self):
         base_path = os.path.split(os.path.dirname(
             os.path.abspath(__file__)))[0]
-        base_path += '/../..'
-        test_dir = "senlin/tests/tempest"
+        base_path += '/..'
+        test_dir = "senlin_tempest_plugin"
         full_test_dir = os.path.join(base_path, test_dir)
         return full_test_dir, base_path
 

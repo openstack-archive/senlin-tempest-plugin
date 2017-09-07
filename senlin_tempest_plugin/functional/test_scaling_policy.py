@@ -12,10 +12,9 @@
 
 from tempest.lib import decorators
 
-from senlin.common.i18n import _
-from senlin.tests.tempest.common import constants
-from senlin.tests.tempest.common import utils
-from senlin.tests.tempest.functional import base
+from senlin_tempest_plugin.common import constants
+from senlin_tempest_plugin.common import utils
+from senlin_tempest_plugin.functional import base
 
 
 class TestScalingPolicy(base.BaseSenlinFunctionalTest):
@@ -124,8 +123,7 @@ class TestScalingPolicy(base.BaseSenlinFunctionalTest):
         self.assertEqual('ACTIVE', cluster['status'])
         self.assertEqual(1, cluster['desired_capacity'])
         self.assertEqual(1, len(cluster['nodes']))
-        reason = _(
-            "Policy check failure: Failed policy '%s': The target "
-            "capacity (-1) is less than the cluster's "
-            "min_size (0).") % scalein_policy['name']
+        reason = "Policy check failure: Failed policy '%s': The target "
+                 "capacity (-1) is less than the cluster's "
+                 "min_size (0)." % scalein_policy['name']
         self.assertEqual(reason, res)

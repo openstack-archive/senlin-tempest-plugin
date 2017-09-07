@@ -10,8 +10,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from senlin.drivers import base
-from senlin.tests.drivers.openstack import sdk
+from senlin_tempest_plugin.drivers import base
+from senlin_tempest_plugin.drivers.openstack import sdk
 
 
 class NeutronClient(base.DriverBase):

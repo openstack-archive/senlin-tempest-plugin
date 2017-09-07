@@ -15,9 +15,9 @@ import time
 from oslo_utils import timeutils
 from tempest.lib import decorators
 
-from senlin.tests.tempest.common import constants
-from senlin.tests.tempest.common import utils
-from senlin.tests.tempest.integration import base
+from senlin_tempest_plugin.common import constants
+from senlin_tempest_plugin.common import utils
+from senlin_tempest_plugin.integration import base
 
 
 class TestReceiver(base.BaseSenlinIntegrationTest):

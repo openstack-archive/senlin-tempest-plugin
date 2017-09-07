@@ -10,7 +10,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from senlin.drivers import base
+from senlin_tempest_plugin.drivers import base
 
 
 class LoadBalancerDriver(base.DriverBase):

@@ -13,9 +13,9 @@
 import copy
 from tempest.lib import decorators
 
-from senlin.tests.tempest.api import base
-from senlin.tests.tempest.common import constants
-from senlin.tests.tempest.common import utils
+from senlin_tempest_plugin.api import base
+from senlin_tempest_plugin.common import constants
+from senlin_tempest_plugin.common import utils
 
 
 class TestClusterUpdateProfile(base.BaseSenlinAPITest):

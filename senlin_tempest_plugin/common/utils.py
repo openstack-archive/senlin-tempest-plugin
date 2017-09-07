@@ -16,7 +16,7 @@ import functools
 from tempest.lib.common.utils import data_utils
 from tempest.lib import exceptions
 
-from senlin.tests.tempest.common import constants
+from senlin_tempest_plugin.common import constants
 
 
 def api_microversion(api_microversion):

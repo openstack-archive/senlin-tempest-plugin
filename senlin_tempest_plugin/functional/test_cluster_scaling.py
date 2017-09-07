@@ -13,8 +13,8 @@
 from tempest.lib import decorators
 
 from senlin.common.i18n import _
-from senlin.tests.tempest.common import utils
-from senlin.tests.tempest.functional import base
+from senlin_tempest_plugin.common import utils
+from senlin_tempest_plugin.functional import base
 
 
 class TestClusterScaleInOut(base.BaseSenlinFunctionalTest):

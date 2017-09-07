@@ -13,7 +13,7 @@
 from tempest.lib import decorators
 from tempest.lib import exceptions
 
-from senlin.tests.tempest.api import base
+from senlin_tempest_plugin.api import base
 
 
 class TestPolicyListNegativeBadRequest(base.BaseSenlinAPITest):
