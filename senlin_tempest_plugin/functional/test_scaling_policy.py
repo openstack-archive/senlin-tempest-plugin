@@ -123,7 +123,7 @@ class TestScalingPolicy(base.BaseSenlinFunctionalTest):
         self.assertEqual('ACTIVE', cluster['status'])
         self.assertEqual(1, cluster['desired_capacity'])
         self.assertEqual(1, len(cluster['nodes']))
-        reason = "Policy check failure: Failed policy '%s': The target "
-                 "capacity (-1) is less than the cluster's "
-                 "min_size (0)." % scalein_policy['name']
+        reason = ("Policy check failure: Failed policy '%s': The target "
+                  "capacity (-1) is less than the cluster's "
+                  "min_size (0).") % scalein_policy['name']
         self.assertEqual(reason, res)

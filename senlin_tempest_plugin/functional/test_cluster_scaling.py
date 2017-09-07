@@ -12,7 +12,6 @@
 
 from tempest.lib import decorators
 
-from senlin.common.i18n import _
 from senlin_tempest_plugin.common import utils
 from senlin_tempest_plugin.functional import base
 
@@ -58,8 +57,8 @@ class TestClusterScaleInOut(base.BaseSenlinFunctionalTest):
         self.assertEqual('ACTIVE', cluster['status'])
         self.assertEqual(4, cluster['desired_capacity'])
         self.assertEqual(4, len(cluster['nodes']))
-        reason = _("The target capacity (6) is greater "
-                   "than the cluster's max_size (5).")
+        reason = ("The target capacity (6) is greater "
+                  "than the cluster's max_size (5).")
         self.assertEqual(reason, res)
 
         # Scale in cluster with count set to 2
