@@ -50,12 +50,14 @@ Launchpad Projects
 - Server: https://launchpad.net/senlin
 - Client: https://launchpad.net/python-senlinclient
 - Dashboard: https://launchpad.net/senlin-dashboard
+- Tempest Plugin: https://launchpad.net/senlin-tempest-plugin
 
 Code Repository
 ---------------
 - Server: https://git.openstack.org/cgit/openstack/senlin
 - Client: https://git.openstack.org/cgit/openstack/python-senlinclient
 - Dashboard: https://git.openstack.org/cgit/openstack/senlin-dashboard
+- Tempest Plugin: https://git.openstack.org/cgit/openstack/senlin-tempest-plugin
 
 Blueprints
 ----------
@@ -63,13 +65,16 @@ Blueprints
 
 Bug Tracking
 ------------
-- Bugs: https://bugs.launchpad.net/senlin
+- Server Bugs: https://bugs.launchpad.net/senlin
+- Client Bugs: https://bugs.launchpad.net/python-senlinclient
+- Dashboard Bugs: https://bugs.launchpad.net/senlin-dashboard
+- Tempest Plugin Bugs: https://bugs.launchpad.net/senlin-tempest-plugin
 
 Weekly Meetings
 ---------------
 - Schedule: every Tuesday at 1300 UTC, on #openstack-meeting channel
 - Agenda: https://wiki.openstack.org/wiki/Meetings/SenlinAgenda
-- Archive: http://eavesdrop.openstack.org/meetings/senlin/2015/
+- Archive: http://eavesdrop.openstack.org/meetings/senlin/2017/
 
 IRC
 ---
