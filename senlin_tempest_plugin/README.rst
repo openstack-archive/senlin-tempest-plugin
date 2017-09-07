@@ -14,7 +14,7 @@ To run only these tests in tempest, go to tempest directory, then run::
 
 To run a single test case, go to tempest directory, then run with test case name, e.g.::
 
-    $ ./run_tempest.sh -N -- senlin.tests.tempest.api.test_cluster_basic.TestClusterBasic.test_cluster_create_delete
+    $ ./run_tempest.sh -N -- senlin_tempest_plugin.tempest.api.test_cluster_basic.TestClusterBasic.test_cluster_create_delete
 
 If you can't find run_tempest.sh script in tempest directory, that means the script has been removed in a certain version.
 Then you can use "nosetests -v" to replace "./run_tempest.sh -N" in above command.
