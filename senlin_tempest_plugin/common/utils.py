@@ -78,7 +78,7 @@ def delete_a_profile(base, profile_id, ignore_missing=False):
 
 def create_a_cluster(base, profile_id, desired_capacity=0, min_size=0,
                      max_size=-1, timeout=None, metadata=None, name=None,
-                     wait_timeout=None):
+                     config=None, wait_timeout=None):
     """Utility function that generates a Senlin cluster.
 
     Create a cluster and return it after it is ACTIVE. The function is used for
@@ -94,7 +94,8 @@ def create_a_cluster(base, profile_id, desired_capacity=0, min_size=0,
             'max_size': max_size,
             'timeout': timeout,
             'metadata': metadata,
-            'name': name
+            'name': name,
+            'config': config
         }
     }
     res = base.client.create_obj('clusters', params)
@@ -402,10 +403,13 @@ def create_a_receiver(base, cluster_id, action, r_type=None, name=None,
             'name': name,
             'cluster_id': cluster_id,
             'type': r_type or 'webhook',
-            'action': action,
             'params': params or {}
         }
     }
+
+    if action is not None:
+        body['receiver']['action'] = action
+
     res = base.client.create_obj('receivers', body)
     return res['body']['id']
 

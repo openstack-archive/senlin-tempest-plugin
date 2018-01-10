@@ -7,84 +7,40 @@ Team and repository tags
 
 .. Change things from this point on
 
-Senlin
-======
+==============================
+Tempest integration of Senlin
+==============================
 
---------
-Overview
---------
+This project contains the Tempest plugin for the Senlin project for
+OpenStack Clustering.
 
-Senlin is a clustering service for OpenStack clouds. It creates and operates
-clusters of homogeneous objects exposed by other OpenStack services. The goal
-is to make the orchestration of collections of similar objects easier.
+For more information about Senlin see:
+https://docs.openstack.org/senlin/latest/
 
-Senlin provides RESTful APIs to users so that they can associate various
-policies to a cluster.  Sample policies include placement policy, load
-balancing policy, health policy, scaling policy, update policy and so on.
+For more information about Tempest plugins see:
+https://docs.openstack.org/tempest/latest/plugin.html
 
-Senlin is designed to be capable of managing different types of objects. An
-object's lifecycle is managed using profile type implementations, which are
-themselves plugins.
+* Free software: Apache license
+* Source: http://git.openstack.org/cgit/openstack/senlin-tempest-plugin
 
----------
-For Users
----------
-
-If you want to install Senlin for a try out, please refer to the documents
-under the ``doc/source/user/`` subdirectory.
-
---------------
-For Developers
---------------
-
-There are many ways to help improve the software, for example, filing a bug,
-submitting or reviewing a patch, writing or reviewing some documents. There
-are documents under the ``doc/source/developer/`` subdirectory.
-
----------
-Resources
----------
-
-Launchpad Projects
-------------------
-- Server: https://launchpad.net/senlin
-- Client: https://launchpad.net/python-senlinclient
-- Dashboard: https://launchpad.net/senlin-dashboard
-- Tempest Plugin: https://launchpad.net/senlin-tempest-plugin
-
-Code Repository
----------------
-- Server: https://git.openstack.org/cgit/openstack/senlin
-- Client: https://git.openstack.org/cgit/openstack/python-senlinclient
-- Dashboard: https://git.openstack.org/cgit/openstack/senlin-dashboard
-- Tempest Plugin: https://git.openstack.org/cgit/openstack/senlin-tempest-plugin
-
-Blueprints
+Installing
 ----------
-- Blueprints: https://blueprints.launchpad.net/senlin
 
-Bug Tracking
-------------
-- Server Bugs: https://bugs.launchpad.net/senlin
-- Client Bugs: https://bugs.launchpad.net/python-senlinclient
-- Dashboard Bugs: https://bugs.launchpad.net/senlin-dashboard
-- Tempest Plugin Bugs: https://bugs.launchpad.net/senlin-tempest-plugin
+Clone this repository to the destination machine, and call from the repo::
 
-Weekly Meetings
----------------
-- Schedule: every Tuesday at 1300 UTC, on #openstack-meeting channel
-- Agenda: https://wiki.openstack.org/wiki/Meetings/SenlinAgenda
-- Archive: http://eavesdrop.openstack.org/meetings/senlin/2017/
+    $ pip install -e .
 
-IRC
----
-IRC Channel: #senlin on `Freenode`_.
+Running the tests
+-----------------
 
-Mailinglist
------------
-Project use http://lists.openstack.org/cgi-bin/mailman/listinfo/openstack-dev
-as the mailinglist. Please use tag ``[Senlin]`` in the subject for new
-threads.
+To run all the tests from this plugin, call from the tempest repo::
 
+    $ tox -e all-plugin -- senlin_tempest_plugin
 
-.. _Freenode: https://freenode.net/
+To run a single test case, call with full path, for example::
+
+    $ tox -e all-plugin -- senlin_tempest_plugin.tests.api.policies.test_policy_update.TestPolicyUpdate.test_policy_update
+
+To retrieve a list of all tempest tests, run::
+
+    $ testr list-tests
