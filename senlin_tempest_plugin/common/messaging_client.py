@@ -43,6 +43,25 @@ class V2MessagingClient(rest_client.RestClient):
         res['body'] = self._parse_resp(body)
         return res
 
+    def create_queue(self, queue_name):
+        uri = '{0}/queues/{1}'.format(self.uri_prefix, queue_name)
+        resp, body = self.put(uri, '', extra_headers=True,
+                              headers=self.headers)
+
+        return self.get_resp(resp, body)
+
+    def delete_queue(self, queue_name):
+        uri = '{0}/queues/{1}'.format(self.uri_prefix, queue_name)
+        resp, body = self.delete(uri, extra_headers=True, headers=self.headers)
+
+        return self.get_resp(resp, body)
+
+    def list_messages(self, queue_name):
+        uri = '{0}/queues/{1}/messages'.format(self.uri_prefix, queue_name)
+        resp, body = self.get(uri, extra_headers=True, headers=self.headers)
+
+        return self.get_resp(resp, body)
+
     def post_messages(self, queue_name, messages):
         uri = '{0}/queues/{1}/messages'.format(self.uri_prefix, queue_name)
         resp, body = self.post(uri, body=jsonutils.dumps(messages),

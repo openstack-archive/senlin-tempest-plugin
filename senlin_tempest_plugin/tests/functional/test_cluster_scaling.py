@@ -80,8 +80,8 @@ class TestClusterScaleInOut(base.BaseSenlinFunctionalTest):
         self.assertEqual(1, len(cluster['nodes']))
 
         # Keep scaling in cluster
-        res = utils.cluster_scale_in(self, self.cluster_id,
-                                     expected_status='FAILED')
+        res, action_id = utils.cluster_scale_in(self, self.cluster_id,
+                                                expected_status='FAILED')
 
         # Verify action result and action failure reason
         cluster = utils.get_a_cluster(self, self.cluster_id)

@@ -129,9 +129,15 @@ def update_a_cluster(base, cluster_id, profile_id=None, name=None,
     return res['body']
 
 
-def get_a_cluster(base, cluster_id):
+def get_a_cluster(base, cluster_id, expected_status=None, wait_timeout=None):
     """Utility function that gets a Senlin cluster."""
-    res = base.client.get_obj('clusters', cluster_id)
+    if expected_status is None:
+        res = base.client.get_obj('clusters', cluster_id)
+    else:
+        base.client.wait_for_status('clusters', cluster_id, expected_status,
+                                    wait_timeout)
+        res = base.client.get_obj('clusters', cluster_id)
+
     return res['body']
 
 
@@ -254,6 +260,12 @@ def delete_a_policy(base, policy_id, ignore_missing=False):
     return
 
 
+def get_a_action(base, action_id):
+    """Utility function that gets a Senlin action."""
+    res = base.client.get_obj('actions', action_id)
+    return res['body']
+
+
 def cluster_attach_policy(base, cluster_id, policy_id,
                           expected_status='SUCCEEDED', wait_timeout=None):
     """Utility function that attach a policy to cluster."""
@@ -366,7 +378,7 @@ def cluster_scale_in(base, cluster_id, count=None,
     action_id = res['location'].split('/actions/')[1]
     res = base.client.wait_for_status('actions', action_id, expected_status,
                                       wait_timeout)
-    return res['body']['status_reason']
+    return res['body']['status_reason'], action_id
 
 
 def cluster_resize(base, cluster_id, adj_type=None, number=None, min_size=None,
@@ -382,6 +394,22 @@ def cluster_resize(base, cluster_id, adj_type=None, number=None, min_size=None,
             'max_size': max_size,
             'min_step': min_step,
             'strict': strict
+        }
+    }
+    res = base.client.trigger_action('clusters', cluster_id, params=params)
+    action_id = res['location'].split('/actions/')[1]
+    res = base.client.wait_for_status('actions', action_id, expected_status,
+                                      wait_timeout)
+    return res['body']['status_reason']
+
+
+def cluster_complete_lifecycle(base, cluster_id, lifecycle_action_token,
+                               expected_status='SUCCEEDED', wait_timeout=None):
+    """Utility function that completes lifecycle for a cluster."""
+
+    params = {
+        'complete_lifecycle': {
+            'lifecycle_action_token': lifecycle_action_token
         }
     }
     res = base.client.trigger_action('clusters', cluster_id, params=params)
@@ -516,6 +544,35 @@ def delete_a_subnet(base, subnet_id, ignore_missing=False):
         if ignore_missing is True:
             return
         raise exceptions.NotFound()
+
+
+def create_queue(base, queue_name):
+    """Utility function that creates Zaqar queue."""
+    res = base.messaging_client.create_queue(queue_name)
+
+    if res['status'] != 201 and res['status'] != 204:
+        msg = 'Failed in creating Zaqar queue %s' % queue_name
+        raise Exception(msg)
+
+
+def delete_queue(base, queue_name):
+    """Utility function that deletes Zaqar queue."""
+    res = base.messaging_client.delete_queue(queue_name)
+
+    if res['status'] != 204:
+        msg = 'Failed in deleting Zaqar queue %s' % queue_name
+        raise Exception(msg)
+
+
+def list_messages(base, queue_name):
+    """Utility function that lists messages in Zaqar queue."""
+    res = base.messaging_client.list_messages(queue_name)
+
+    if res['status'] != 200:
+        msg = 'Failed in listing messsages for Zaqar queue %s' % queue_name
+        raise Exception(msg)
+
+    return res['body']['messages']
 
 
 def post_messages(base, queue_name, messages):
