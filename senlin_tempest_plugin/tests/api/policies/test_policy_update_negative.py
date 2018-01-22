@@ -38,7 +38,7 @@ class TestPolicyUpdateNegativeNotFound(base.BaseSenlinAPITest):
         ex = self.assertRaises(exceptions.BadRequest,
                                self.client.update_obj, 'policies',
                                '5df90d82-9889-4c6f-824c-30272bcfa767',
-                               {'policy': {'boo': 'foo'}})
+                               {'policy': {'spec': {}, 'boo': 'bar'}})
 
         message = ex.resp_body['error']['message']
         self.assertEqual(

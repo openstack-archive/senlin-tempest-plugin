@@ -48,8 +48,7 @@ class TestPolicyValidateNegativeBadRequest(base.BaseSenlinAPITest):
 
         message = ex.resp_body['error']['message']
         self.assertEqual(
-            "Additional properties are not allowed (u'name' "
-            "was unexpected)", str(message))
+            "'spec' is a required property", str(message))
 
     @decorators.attr(type=['negative'])
     @decorators.idempotent_id('a1c35d93-2d19-4a72-919f-cfd70f5cbf06')
