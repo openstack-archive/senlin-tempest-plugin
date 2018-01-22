@@ -1,0 +1,21 @@
+- project:
+    name: openstack/senlin-tempest-plugin
+    check:
+      jobs:
+        - senlin-dsvm-tempest-py27-api
+        - senlin-dsvm-tempest-py35-api:
+            voting: false
+            branches: ^(?!stable/newton).*$
+        - senlin-dsvm-tempest-py27-functional
+        - senlin-dsvm-tempest-py35-functional:
+            voting: false
+            branches: ^(?!stable/newton).*$
+        - senlin-dsvm-tempest-py27-integration:
+            voting: false
+        - senlin-dsvm-tempest-py35-integration:
+            voting: false
+            branches: ^(?!stable/newton).*$
+    gate:
+      jobs:
+        - senlin-dsvm-tempest-py27-api
+        - senlin-dsvm-tempest-py27-functional
