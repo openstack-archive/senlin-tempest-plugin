@@ -74,6 +74,8 @@ class TestProfileCreateNegativeBadRequest(base.BaseSenlinAPITest):
     def test_profile_create_invalid_param(self):
         params = {
             'profile': {
+                'name': 'bar',
+                'spec': {},
                 'boo': 'foo'
             }
         }

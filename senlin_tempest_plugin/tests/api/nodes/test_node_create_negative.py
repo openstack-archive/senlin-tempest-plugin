@@ -102,6 +102,11 @@ class TestNodeCreateNegativeBadRequest(base.BaseSenlinAPITest):
 
 class TestNodeCreateNegativeInvalidRequest(base.BaseSenlinAPITest):
 
+    def setUp(self):
+        super(TestNodeCreateNegativeInvalidRequest, self).setUp()
+        self.profile_id = utils.create_a_profile(self)
+        self.addCleanup(utils.delete_a_profile, self, self.profile_id)
+
     @decorators.idempotent_id('b109aa66-2a54-493e-8a07-1ea6f20e17ce')
     def test_node_create_empty_param(self):
         params = {}
@@ -119,7 +124,7 @@ class TestNodeCreateNegativeInvalidRequest(base.BaseSenlinAPITest):
     def test_node_create_unsupported_param(self):
         params = {
             'node': {
-                'profile_id': 'fake_profile',
+                'profile_id': self.profile_id,
                 'name': 'fake_name',
                 'boo': 'foo'
             }

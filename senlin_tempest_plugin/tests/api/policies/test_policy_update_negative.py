@@ -35,15 +35,22 @@ class TestPolicyUpdateNegativeNotFound(base.BaseSenlinAPITest):
     @decorators.attr(type=['negative'])
     @decorators.idempotent_id('29414add-9cba-4b72-a7bb-36718671dcab')
     def test_policy_update_policy_invalid_param(self):
+        params = {
+            'policy': {
+                'name': 'foo',
+                'spec': {},
+                'boo': 'bar'
+            }
+        }
         ex = self.assertRaises(exceptions.BadRequest,
                                self.client.update_obj, 'policies',
                                '5df90d82-9889-4c6f-824c-30272bcfa767',
-                               {'policy': {'spec': {}, 'boo': 'bar'}})
+                               params)
 
         message = ex.resp_body['error']['message']
         self.assertEqual(
-            "Additional properties are not allowed (u'boo' was "
-            "unexpected)", str(message))
+            "Additional properties are not allowed (u'spec', u'boo' "
+            "were unexpected)", str(message))
 
     @decorators.attr(type=['negative'])
     @decorators.idempotent_id('bf26ed1e-1d26-4472-b4c8-0bcca1c0a838')

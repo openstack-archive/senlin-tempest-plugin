@@ -57,6 +57,8 @@ class TestPolicyCreateNegativeBadRequest(base.BaseSenlinAPITest):
     def test_policy_create_invalid_param(self):
         params = {
             'policy': {
+                'name': 'bar',
+                'spec': {},
                 'boo': 'foo'
             }
         }
