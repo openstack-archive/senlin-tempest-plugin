@@ -26,4 +26,4 @@ class TestBuildInfo(base.BaseSenlinAPITest):
         self.assertEqual(200, int(resp['status']))
         self.assertIsNotNone(info)
         for key in ['api', 'engine']:
-            self.assertIn(key, info)
+            self.assertIn(key, str(info))

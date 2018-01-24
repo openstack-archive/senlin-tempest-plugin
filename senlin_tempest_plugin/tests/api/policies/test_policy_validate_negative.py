@@ -34,24 +34,6 @@ class TestPolicyValidateNegativeBadRequest(base.BaseSenlinAPITest):
             "Request body missing 'policy' key.", str(message))
 
     @decorators.attr(type=['negative'])
-    @decorators.idempotent_id('4c9f26cc-f4f3-4303-9f29-f30fae400843')
-    def test_policy_validate_invalid_param(self):
-        params = {
-            'policy': {
-                'name': 'fake'
-            }
-        }
-        # Verify badrequest exception(400) is raised.
-        ex = self.assertRaises(exceptions.BadRequest,
-                               self.client.validate_obj,
-                               'policies', params)
-
-        message = ex.resp_body['error']['message']
-        self.assertEqual(
-            "Additional properties are not allowed (u'name' was unexpected)",
-            str(message))
-
-    @decorators.attr(type=['negative'])
     @decorators.idempotent_id('a1c35d93-2d19-4a72-919f-cfd70f5cbf06')
     def test_policy_validate_no_spec(self):
         params = {

@@ -85,9 +85,7 @@ class TestProfileCreateNegativeBadRequest(base.BaseSenlinAPITest):
                                'profiles', params)
 
         message = ex.resp_body['error']['message']
-        self.assertEqual(
-            "Additional properties are not allowed (u'boo' was "
-            "unexpected)", str(message))
+        self.assertIn("Additional properties are not allowed", str(message))
 
     @decorators.attr(type=['negative'])
     @decorators.idempotent_id('591f3670-3fec-4645-bae2-4f6dec28d70c')

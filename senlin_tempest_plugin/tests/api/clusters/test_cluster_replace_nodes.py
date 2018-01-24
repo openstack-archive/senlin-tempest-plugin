@@ -159,8 +159,7 @@ class TestClusterReplaceNodesNegativeOldNotFound(base.BaseSenlinAPITest):
                                'clusters', self.cluster_id, params)
 
         message = ex.resp_body['error']['message']
-        self.assertEqual("Original nodes not found: [u'old_node'].",
-                         str(message))
+        self.assertIn("Original nodes not found", str(message))
 
 
 class TestClusterReplaceNodesNegativeNewNotFound(base.BaseSenlinAPITest):
@@ -191,8 +190,7 @@ class TestClusterReplaceNodesNegativeNewNotFound(base.BaseSenlinAPITest):
                                'clusters', self.cluster_id, params)
 
         message = ex.resp_body['error']['message']
-        self.assertEqual("Replacement nodes not found: [u'new_node'].",
-                         str(message))
+        self.assertIn("Replacement nodes not found", str(message))
 
 
 class TestClusterReplaceNodesNegativeNewNotOrphan(base.BaseSenlinAPITest):
@@ -229,9 +227,7 @@ class TestClusterReplaceNodesNegativeNewNotOrphan(base.BaseSenlinAPITest):
                                'clusters', self.cluster_id, params)
 
         message = ex.resp_body['error']['message']
-        self.assertEqual(
-            "Nodes [u'%s'] already member of a cluster." % self.new_node,
-            str(message))
+        self.assertIn("already member of a cluster", str(message))
 
 
 class TestClusterReplaceNodeNegativeProfileUnmatch(base.BaseSenlinAPITest):
@@ -270,9 +266,8 @@ class TestClusterReplaceNodeNegativeProfileUnmatch(base.BaseSenlinAPITest):
                                'clusters', self.cluster_id, params)
 
         message = ex.resp_body['error']['message']
-        self.assertEqual(
-            "Profile type of nodes [u'%s'] do not match that of the "
-            "cluster." % self.new_node, str(message))
+        self.assertIn("Profile type of nodes", str(message))
+        self.assertIn("do not match that of the cluster", str(message))
 
 
 class TestClusterReplaceNodeNegativeOldOrphan(base.BaseSenlinAPITest):
@@ -306,10 +301,8 @@ class TestClusterReplaceNodeNegativeOldOrphan(base.BaseSenlinAPITest):
                                self.cluster_id, params)
 
         message = ex.resp_body['error']['message']
-        self.assertEqual(
-            "The specified nodes [u'%s'] to be replaced are not members "
-            "of the cluster %s." % (self.old_node, self.cluster_id),
-            str(message))
+        self.assertIn("to be replaced are not members of the cluster",
+                      str(message))
 
 
 class TestClusterReplaceNodeNegativeClusterNotFound(base.BaseSenlinAPITest):

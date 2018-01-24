@@ -87,6 +87,4 @@ class TestProfileUpdateNegativeBadRequest(base.BaseSenlinAPITest):
                                'profiles', self.profile_id, params)
 
         message = ex.resp_body['error']['message']
-        self.assertEqual(
-            "Additional properties are not allowed (u'spec' was "
-            "unexpected)", str(message))
+        self.assertIn("Additional properties are not allowed", str(message))

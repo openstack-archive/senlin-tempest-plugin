@@ -136,9 +136,8 @@ class TestNodeCreateNegativeInvalidRequest(base.BaseSenlinAPITest):
                                'nodes', params)
 
         message = ex.resp_body['error']['message']
-        self.assertEqual(
-            "Additional properties are not allowed (u'boo' "
-            "was unexpected)", str(message))
+        self.assertIn("Additional properties are not allowed",
+                      str(message))
 
     @decorators.idempotent_id('0ac2a77e-082c-47d2-8156-92e7fb43689c')
     def test_node_create_miss_name(self):

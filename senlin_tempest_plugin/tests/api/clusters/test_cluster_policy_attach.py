@@ -126,9 +126,7 @@ class TestClusterPolicyAttachNegativePolicyNotFound(base.BaseSenlinAPITest):
                                'clusters', self.cluster_id, params)
 
         message = ex.resp_body['error']['message']
-        self.assertEqual(
-            "Additional properties are not allowed (u'poilicy_id' "
-            "was unexpected)", str(message))
+        self.assertIn("Additional properties are not allowed", str(message))
 
 
 class TestClusterPolicyAttachNegativeNotFound(base.BaseSenlinAPITest):

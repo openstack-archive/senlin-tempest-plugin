@@ -35,9 +35,7 @@ class TestClusterUpdateNegativeInvalidParam(base.BaseSenlinAPITest):
                                params)
 
         message = ex.resp_body['error']['message']
-        self.assertEqual(
-            "Additional properties are not allowed (u'bad' was "
-            "unexpected)", str(message))
+        self.assertIn("Additional properties are not allowed", str(message))
 
     @decorators.attr(type=['negative'])
     @decorators.idempotent_id('80cd0acd-772f-482f-8c6d-90843d986eb1')

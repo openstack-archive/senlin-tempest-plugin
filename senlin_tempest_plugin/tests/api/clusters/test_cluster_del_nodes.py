@@ -146,9 +146,7 @@ class TestClusterDelNodesNegativeNodeNotFound(base.BaseSenlinAPITest):
                                'clusters', self.cluster_id, params)
 
         message = ex.resp_body['error']['message']
-        self.assertEqual(
-            "Nodes not found: [u'e896948b-44c0-4dfa-9466-407391504833'].",
-            str(message))
+        self.assertIn("Nodes not found", str(message))
 
 
 class TestClusterDelNodesNegativeOrphanNode(base.BaseSenlinAPITest):

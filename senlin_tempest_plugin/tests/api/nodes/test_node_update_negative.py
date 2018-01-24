@@ -11,6 +11,7 @@
 # under the License.
 
 import copy
+
 from tempest.lib import decorators
 from tempest.lib import exceptions
 
