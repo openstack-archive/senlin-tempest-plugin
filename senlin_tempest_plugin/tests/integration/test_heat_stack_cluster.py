@@ -17,7 +17,7 @@ from senlin_tempest_plugin.common import utils
 from senlin_tempest_plugin.tests.integration import base
 
 
-class TestHeatStackCluster(base.BaseSenlinIntegrationTest):
+class TestHeatStackCluster(base.BaseSenlinIntegrationNonAdminTest):
 
     def setUp(self):
         super(TestHeatStackCluster, self).setUp()
