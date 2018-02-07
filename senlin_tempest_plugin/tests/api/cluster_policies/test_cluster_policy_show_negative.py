@@ -19,7 +19,7 @@ from senlin_tempest_plugin.tests.api import base
 
 class TestClusterPolicyShowNegativeClusterNotFound(base.BaseSenlinAPITest):
 
-    @decorators.attr(type=['negative'])
+    # @decorators.attr(type=['negative'])
     @decorators.idempotent_id('965d7324-e3f7-4d77-8e7f-44c862b851f7')
     def test_cluster_policy_show_cluster_not_found(self):
         ex = self.assertRaises(exceptions.NotFound,

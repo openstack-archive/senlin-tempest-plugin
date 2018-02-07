@@ -18,11 +18,11 @@ import time
 from oslo_serialization import jsonutils
 from oslo_utils import timeutils
 
-from tempest import config
+from tempest import config as cfg
 from tempest.lib.common import rest_client
 from tempest.lib import exceptions
 
-CONF = config.CONF
+CONF = cfg.CONF
 
 
 class ClusteringAPIClient(rest_client.RestClient):
@@ -46,7 +46,8 @@ class ClusteringAPIClient(rest_client.RestClient):
         res.update(resp)
 
         # Parse body, Python 3 returns string "b'null'" for delete operations
-        if body is not None and str(body) not in ["", "null", "b'null'"]:
+        if (body is not None and
+                str(body) not in ["", "null", "b'null'", "b''"]):
             res['body'] = self._parse_resp(body)
         else:
             res['body'] = None
@@ -152,10 +153,10 @@ class ClusteringAPIClient(rest_client.RestClient):
 
         with timeutils.StopWatch(timeout) as timeout_watch:
             while timeout > 0:
+                time.sleep(5)
                 res = self.get_obj(obj_type, obj_id)
                 if res['body']['status'] == expected_status:
                     return res
-                time.sleep(5)
                 timeout = timeout_watch.leftover(True)
 
         raise Exception('Timeout waiting for status.')
