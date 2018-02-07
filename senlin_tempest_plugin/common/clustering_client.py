@@ -45,8 +45,8 @@ class ClusteringAPIClient(rest_client.RestClient):
         # Parse other keys included in resp
         res.update(resp)
 
-        # Parse body
-        if body and str(body) != 'null':
+        # Parse body, Python 3 returns string "b'null'" for delete operations
+        if body is not None and str(body) not in ["", "null", "b'null'"]:
             res['body'] = self._parse_resp(body)
         else:
             res['body'] = None

@@ -38,7 +38,9 @@ class TestClusterUpdateProfile(base.BaseSenlinAPITest):
 
         self.node1_id = utils.create_a_node(
             self, self.old_profile_id, name='N01', cluster_id=self.cluster_id)
-        self.addCleanup(utils.delete_a_node, self, self.node1_id)
+        # The following logic is not needed, when cluster is deleted, the
+        # node is deleted automatially.
+        # self.addCleanup(utils.delete_a_node, self, self.node1_id)
 
     @decorators.idempotent_id('abff7891-21af-4c37-a8df-5bc7379ce349')
     def test_cluster_update_profile(self):

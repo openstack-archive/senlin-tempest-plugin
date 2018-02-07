@@ -103,7 +103,6 @@ def create_a_cluster(base, profile_id, desired_capacity=0, min_size=0,
     action_id = res['location'].split('/actions/')[1]
     base.client.wait_for_status('actions', action_id, 'SUCCEEDED',
                                 wait_timeout)
-
     return cluster_id
 
 
@@ -147,6 +146,7 @@ def delete_a_cluster(base, cluster_id, wait_timeout=None):
     action_id = res['location'].split('/actions/')[1]
     base.client.wait_for_status('actions', action_id, 'SUCCEEDED',
                                 wait_timeout)
+    base.client.wait_for_delete("clusters", cluster_id, wait_timeout)
     return
 
 
