@@ -31,6 +31,7 @@ class TestReceiver(base.BaseSenlinIntegrationTest):
                                                  desired_capacity=1)
         self.addCleanup(utils.delete_a_cluster, self, self.cluster_id)
 
+    @decorators.skip_because(bug="1747904")
     @decorators.attr(type=['integration'])
     @decorators.idempotent_id('16902c7a-1057-49bb-aa9e-227297864a92')
     def test_message_receiver(self):
