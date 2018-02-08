@@ -115,8 +115,8 @@ class TestScalingPolicy(base.BaseSenlinFunctionalTest):
 
         # Keep scaling in cluster with count set to 2 to
         # verify best_effort parameter
-        res = utils.cluster_scale_in(self, self.cluster_id, count=2,
-                                     expected_status='FAILED')
+        res, action_id = utils.cluster_scale_in(self, self.cluster_id, count=2,
+                                                expected_status='FAILED')
 
         # Verify action result and action failure reason
         cluster = utils.get_a_cluster(self, self.cluster_id)

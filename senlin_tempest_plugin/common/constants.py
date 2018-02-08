@@ -20,8 +20,7 @@ spec_nova_server = {
         "image": "cirros-0.3.5-x86_64-disk",
         "networks": [
             {"network": "private"}
-        ],
-        "key_name": "oskey"
+        ]
     }
 }
 
@@ -113,5 +112,30 @@ spec_batch_policy = {
         "min_in_service": 1,
         "max_batch_size": 1,
         "pause_time": 3
+    }
+}
+
+
+spec_deletion_policy = {
+    "type": "senlin.policy.deletion",
+    "version": "1.1",
+    "properties": {
+        "criteria": "OLDEST_FIRST"
+    }
+}
+
+
+spec_deletion_policy_with_hook = {
+    "type": "senlin.policy.deletion",
+    "version": "1.1",
+    "properties": {
+        "hooks": {
+            "type": "zaqar",
+            "timeout": 300,
+            "params": {
+                "queue": "test_queue"
+            }
+        },
+        "criteria": "OLDEST_FIRST"
     }
 }
