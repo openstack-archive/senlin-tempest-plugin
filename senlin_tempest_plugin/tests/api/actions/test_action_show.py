@@ -10,6 +10,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import time
+
 from tempest.lib import decorators
 
 from senlin_tempest_plugin.common import utils
@@ -23,6 +25,7 @@ class TestActionShow(base.BaseSenlinAPITest):
         profile_id = utils.create_a_profile(self)
         self.addCleanup(utils.delete_a_profile, self, profile_id)
 
+        self.lower_time_bound = time.time()
         params = {
             'cluster': {
                 'profile_id': profile_id,
@@ -39,6 +42,7 @@ class TestActionShow(base.BaseSenlinAPITest):
         self.addCleanup(utils.delete_a_cluster, self, res['body']['id'])
 
         self.client.wait_for_status('actions', self.action_id, 'SUCCEEDED')
+        self.upper_time_bound = time.time()
 
     @decorators.idempotent_id('c6376f60-8f52-4384-8b6d-57df264f2e23')
     def test_action_show(self):
@@ -55,3 +59,11 @@ class TestActionShow(base.BaseSenlinAPITest):
                     'start_time', 'status', 'status_reason', 'target',
                     'timeout', 'updated_at']:
             self.assertIn(key, action)
+
+        for key in ['start_time', 'end_time']:
+            self.assertTrue(action[key] > self.lower_time_bound,
+                            '{} is smaller than {}'.format(
+                                action[key], self.lower_time_bound))
+            self.assertTrue(action[key] < self.upper_time_bound,
+                            '{} is larger than {}'.format(
+                                action[key], self.upper_time_bound))
