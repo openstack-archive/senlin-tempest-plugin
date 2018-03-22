@@ -108,7 +108,6 @@ class TestDeletionPolicy(base.BaseSenlinFunctionalTest):
 
     @decorators.attr(type=['functional'])
     @decorators.idempotent_id('88ea4617-10a6-4005-a641-b9459418661f')
-    @decorators.skip_because(bug="1746123")
     def test_deletion_policy_with_hook_timeout(self):
         # Create a deletion policy with hook
         spec = constants.spec_deletion_policy_with_hook
