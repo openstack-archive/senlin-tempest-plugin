@@ -28,7 +28,6 @@ class TestLifecycleHookMessage(base.BaseSenlinIntegrationTest):
                                                  desired_capacity=2)
         self.addCleanup(utils.delete_a_cluster, self, self.cluster_id)
 
-    @decorators.skip_because(bug="1747904")
     @decorators.attr(type=['integration'])
     @decorators.idempotent_id('9ac7ed9d-7338-45fb-b749-f67ddeb6caa2')
     def test_lifecycle_hook_message(self):
