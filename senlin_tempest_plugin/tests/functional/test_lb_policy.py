@@ -29,7 +29,7 @@ class TestLBPolicy(base.BaseSenlinFunctionalTest):
         self.addCleanup(utils.delete_a_cluster, self, self.cluster_id)
 
     @decorators.attr(type=['functional'])
-    @decorators.idempotent_id('6b513a5d-75b6-447a-b95d-e17b84ac9ee8')
+    @decorators.idempotent_id('6b513a5d-75b6-447a-b95d-e17b84ac9ee2')
     def test_lb_policy(self):
         # Verify there is no lb information in node data
         cluster = utils.get_a_cluster(self, self.cluster_id)
