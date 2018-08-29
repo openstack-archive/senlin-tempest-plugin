@@ -1,4 +1,7 @@
 - project:
+    templates:
+      - check-requirements
+      - tempest-plugin-jobs
     check:
       jobs:
         - senlin-dsvm-tempest-py27-api
@@ -15,6 +18,7 @@
             voting: false
             branches: ^(?!stable/newton).*$
     gate:
+      queue: senlin
       jobs:
         - senlin-dsvm-tempest-py27-api
         - senlin-dsvm-tempest-py27-functional
