@@ -11,6 +11,7 @@
 # under the License.
 
 from tempest.lib import decorators
+from tempest.lib import exceptions
 
 from senlin_tempest_plugin.common import constants
 from senlin_tempest_plugin.common import utils
@@ -127,3 +128,23 @@ class TestScalingPolicy(base.BaseSenlinFunctionalTest):
                   "capacity (-1) is less than the cluster's "
                   "min_size (0).") % scalein_policy['name']
         self.assertEqual(reason, res)
+
+    @decorators.attr(type=['functional'])
+    @decorators.idempotent_id('61d0eaae-011f-4a4e-91ca-640d303be5ab')
+    def test_scaling_policy_invalid_type(self):
+        spec = constants.spec_scaling_policy
+        spec['properties'] = {
+            'event': 'CLUSTER_SCALE_OUT',
+            'adjustment': {
+                'type': 'blah',
+                'number': 2,
+                'min_step': 1,
+                'best_effort': True
+            }
+        }
+
+        with self.assertRaisesRegex(
+                exceptions.ServerFault,
+                "'blah' must be one of the allowed values: EXACT_CAPACITY, "
+                "CHANGE_IN_CAPACITY, CHANGE_IN_PERCENTAGE"):
+            utils.create_a_policy(self, spec)
