@@ -21,3 +21,7 @@ export DEVSTACK_DIR=$DEST/devstack
 export SENLIN_DIR=$DEST/senlin
 
 source $DEVSTACK_DIR/openrc admin admin
+
+cd $DEST/tempest
+echo "Running tempest " $SENLIN_TEST_TYPE "tests"
+sudo tox -evenv-tempest -- tempest run --regex $DEVSTACK_GATE_TEMPEST_REGEX
