@@ -26,6 +26,6 @@ ClusteringGroup = [
                default="clustering",
                help="Catalog type of the clustering service."),
     cfg.IntOpt("wait_timeout",
-               default=60,
+               default=180,
                help="Waiting time for a specific status, in seconds.")
 ]
