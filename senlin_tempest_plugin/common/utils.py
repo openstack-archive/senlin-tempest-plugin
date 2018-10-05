@@ -56,11 +56,13 @@ def create_a_profile(base, spec=None, name=None, metadata=None):
     if name is None:
         name = data_utils.rand_name("tempest-created-profile")
 
+    if metadata:
+        spec['properties']['metadata'] = metadata
+
     params = {
         'profile': {
             'name': name,
             'spec': spec,
-            'metadata': metadata,
         }
     }
     res = base.client.create_obj('profiles', params)

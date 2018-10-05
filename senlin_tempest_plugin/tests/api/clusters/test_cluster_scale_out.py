@@ -12,6 +12,7 @@
 
 from tempest.lib import decorators
 from tempest.lib import exceptions
+import time
 
 from senlin_tempest_plugin.common import utils
 from senlin_tempest_plugin.tests.api import base
@@ -115,3 +116,46 @@ class TestClusterScaleOutNegativeNotFound(base.BaseSenlinAPITest):
         self.assertEqual(
             "The cluster 'b7038d95-204c-455f-a866-94dc535dd840' could "
             "not be found.", str(message))
+
+
+class TestClusterScaleOutNegativeResourceIsLocked(base.BaseSenlinAPITest):
+
+    def setUp(self):
+        super(TestClusterScaleOutNegativeResourceIsLocked, self).setUp()
+        # create profile with simulated wait time to test
+        # cluster locked scenario
+        profile_id = utils.create_a_profile(
+            self, metadata={'simulated_wait_time': 10})
+        self.addCleanup(utils.delete_a_profile, self, profile_id)
+        self.cluster_id = utils.create_a_cluster(self, profile_id)
+        self.addCleanup(utils.delete_a_cluster, self, self.cluster_id)
+
+    def test_cluster_action_scale_out_locked_cluster(self):
+        params = {
+            "scale_out": {
+                "count": "1"
+            }
+        }
+        # Trigger cluster scale out
+        res = self.client.trigger_action('clusters', self.cluster_id,
+                                         params=params)
+
+        self.assertEqual(202, res['status'])
+
+        # sleep long enough for the action to start executing and locking
+        # the clusters
+        time.sleep(5)
+
+        # Verify resource locked exception(409) is raised
+        # when another scale out is called within 5 secs
+        ex = self.assertRaises(exceptions.Conflict,
+                               self.client.trigger_action, 'clusters',
+                               self.cluster_id, params)
+
+        message = ex.resp_body['error']['message']
+        self.assertEqual(
+            ("CLUSTER_SCALE_OUT for cluster '{}' cannot be completed because "
+             "it is already locked.").format(self.cluster_id), str(message))
+
+        # sleep long enough for the cluster lock to clear
+        time.sleep(15)
