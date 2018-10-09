@@ -24,7 +24,6 @@ spec_nova_server = {
     }
 }
 
-
 spec_heat_stack = {
     "type": "os.heat.stack",
     "version": "1.0",
@@ -54,7 +53,6 @@ spec_heat_stack = {
     }
 }
 
-
 spec_scaling_policy = {
     "type": "senlin.policy.scaling",
     "version": "1.0",
@@ -68,7 +66,6 @@ spec_scaling_policy = {
         }
     }
 }
-
 
 spec_lb_policy = {
     "type": "senlin.policy.loadbalance",
@@ -104,7 +101,6 @@ spec_lb_policy = {
     }
 }
 
-
 spec_batch_policy = {
     "type": "senlin.policy.batch",
     "version": "1.0",
@@ -115,7 +111,6 @@ spec_batch_policy = {
     }
 }
 
-
 spec_deletion_policy = {
     "type": "senlin.policy.deletion",
     "version": "1.1",
@@ -123,7 +118,6 @@ spec_deletion_policy = {
         "criteria": "OLDEST_FIRST"
     }
 }
-
 
 spec_deletion_policy_with_hook = {
     "type": "senlin.policy.deletion",
@@ -137,5 +131,87 @@ spec_deletion_policy_with_hook = {
             }
         },
         "criteria": "OLDEST_FIRST"
+    }
+}
+
+spec_health_policy = {
+    "version": "1.1",
+    "type": "senlin.policy.health",
+    "description": "A policy for maintaining node health from a cluster.",
+    "properties": {
+        "detection": {
+            "detection_modes": [
+                {
+                    "type": "NODE_STATUS_POLLING"
+                },
+                {
+                    "type": "NODE_STATUS_POLL_URL",
+                    "options": {
+                        "poll_url_retry_limit": 3,
+                        "poll_url": "http://127.0.0.1:5050",
+                        "poll_url_retry_interval": 2
+                    }
+                }
+            ],
+            "node_update_timeout": 10,
+            "interval": 10
+        },
+        "recovery": {
+            "node_delete_timeout": 90,
+            "actions": [
+                {
+                    "name": "RECREATE"
+                }
+            ],
+            "node_force_recreate": True
+        }
+    }
+}
+
+spec_health_policy_duplicate_type = {
+    "version": "1.1",
+    "type": "senlin.policy.health",
+    "properties": {
+        "detection": {
+            "detection_modes": [
+                {
+                    "type": "NODE_STATUS_POLLING"
+                },
+                {
+                    "type": "NODE_STATUS_POLLING",
+                }
+            ],
+        },
+        "recovery": {
+            "actions": [
+                {
+                    "name": "RECREATE"
+                }
+            ],
+        }
+    }
+}
+
+spec_health_policy_invalid_combo = {
+    "version": "1.1",
+    "type": "senlin.policy.health",
+    "properties": {
+        "detection": {
+            "detection_modes": [
+                {
+                    "type": "NODE_STATUS_POLLING"
+                },
+                {
+                    "type": "LIFECYCLE_EVENTS",
+                }
+            ],
+        },
+        "recovery": {
+            "actions": [
+                {
+                    "name": "RECREATE"
+                }
+            ],
+        }
     }
 }

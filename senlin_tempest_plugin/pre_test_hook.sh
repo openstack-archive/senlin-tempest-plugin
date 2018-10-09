@@ -35,6 +35,7 @@ _LOG_CFG+=',oslo_messaging._drivers.amqpdriver=WARN'
 echo -e '[[post-config|$SENLIN_CONF]]\n[DEFAULT]\n' >> $localconf
 echo -e 'num_engine_workers=2\n' >> $localconf
 echo -e "cloud_backend=$SENLIN_BACKEND\n" >> $localconf
+echo -e "health_check_interval_min=10\n" >> $localconf
 echo -e $_LOG_CFG >> $localconf
 
 if [[ "$SENLIN_BACKEND" == "openstack" ]]; then

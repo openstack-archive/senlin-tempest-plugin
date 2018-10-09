@@ -13,8 +13,13 @@
 # limitations under the License.
 
 from oslo_serialization import jsonutils
+from oslo_utils import timeutils
+import time
+
 from tempest import config
 from tempest.lib.common import rest_client
+from tempest.lib import exceptions
+
 
 CONF = config.CONF
 
@@ -45,8 +50,27 @@ class NetworkClient(rest_client.RestClient):
 
         return self.get_resp(resp, body)
 
+    def get_obj(self, obj_type, obj_id):
+        uri = '{0}/{1}/{2}'.format(self.uri_prefix, obj_type, obj_id)
+        resp, body = self.get(uri)
+
+        return self.get_resp(resp, body)
+
     def delete_obj(self, obj_type, obj_id):
         uri = '{0}/{1}/{2}'.format(self.uri_prefix, obj_type, obj_id)
         resp, body = self.delete(uri)
 
         return self.get_resp(resp, body)
+
+    def wait_for_delete(self, obj_type, obj_id, timeout=None):
+        timeout = timeout or CONF.clustering.wait_timeout
+
+        with timeutils.StopWatch(timeout) as timeout_watch:
+            while not timeout_watch.expired():
+                try:
+                    self.get_obj(obj_type, obj_id)
+                except exceptions.NotFound:
+                    return
+                time.sleep(5)
+
+        raise exceptions.TimeoutException()

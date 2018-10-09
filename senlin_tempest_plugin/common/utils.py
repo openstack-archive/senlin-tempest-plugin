@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import functools
+import subprocess
 
 from tempest.lib.common.utils import data_utils
 from tempest.lib import exceptions
@@ -507,7 +508,8 @@ def create_a_network(base, name=None):
     return body['body']['id']
 
 
-def delete_a_network(base, network_id, ignore_missing=False):
+def delete_a_network(base, network_id, ignore_missing=False,
+                     wait_timeout=None):
     """Utility function that deletes a Neutron network."""
 
     res = base.network_client.delete_obj('networks', network_id)
@@ -515,6 +517,8 @@ def delete_a_network(base, network_id, ignore_missing=False):
         if ignore_missing is True:
             return
         raise exceptions.NotFound()
+
+    base.network_client.wait_for_delete('networks', network_id, wait_timeout)
 
 
 def create_a_subnet(base, network_id, cidr, ip_version=4, name=None):
@@ -536,7 +540,7 @@ def create_a_subnet(base, network_id, cidr, ip_version=4, name=None):
     return body['body']['id']
 
 
-def delete_a_subnet(base, subnet_id, ignore_missing=False):
+def delete_a_subnet(base, subnet_id, ignore_missing=False, wait_timeout=None):
     """Utility function that deletes a Neutron subnet."""
 
     res = base.network_client.delete_obj('subnets', subnet_id)
@@ -544,6 +548,8 @@ def delete_a_subnet(base, subnet_id, ignore_missing=False):
         if ignore_missing is True:
             return
         raise exceptions.NotFound()
+
+    base.network_client.wait_for_delete('subnets', subnet_id, wait_timeout)
 
 
 def create_queue(base, queue_name):
@@ -582,3 +588,18 @@ def post_messages(base, queue_name, messages):
     if res['status'] != 201:
         msg = 'Failed in posting messages to Zaqar queue %s' % queue_name
         raise Exception(msg)
+
+
+def start_http_server(port):
+    return subprocess.Popen(
+        ['python', '-m', 'SimpleHTTPServer', port], cwd='/tmp',
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    )
+
+
+def terminate_http_server(p):
+    if not p.poll():
+        p.terminate()
+        return p.stdout.read()
+
+    return
