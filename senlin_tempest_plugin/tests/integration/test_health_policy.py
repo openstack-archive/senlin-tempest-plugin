@@ -19,6 +19,7 @@ from senlin_tempest_plugin.common import utils
 from senlin_tempest_plugin.tests.integration import base
 
 
+@decorators.skip_because(bug=1797270)
 class TestHealthPolicy(base.BaseSenlinIntegrationTest):
     def setUp(self):
         super(TestHealthPolicy, self).setUp()
