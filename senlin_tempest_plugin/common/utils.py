@@ -12,7 +12,12 @@
 # limitations under the License.
 
 import functools
-import subprocess
+import os
+import signal
+from six.moves import BaseHTTPServer
+from six.moves import http_client as http
+import tempfile
+import tenacity
 
 from tempest.lib.common.utils import data_utils
 from tempest.lib import exceptions
@@ -33,9 +38,13 @@ def api_microversion(api_microversion):
     return decorator
 
 
-def prepare_and_cleanup_for_nova_server(base):
+def prepare_and_cleanup_for_nova_server(base, cidr, spec=None):
     keypair_name = create_a_keypair(base, is_admin_manager=False)
-    base.spec = constants.spec_nova_server
+    if spec is None:
+        base.spec = constants.spec_nova_server
+    else:
+        base.spec = spec
+
     base.spec['properties']['key_name'] = keypair_name
     base.addCleanup(delete_a_keypair, base, keypair_name,
                     is_admin_manager=False)
@@ -44,7 +53,7 @@ def prepare_and_cleanup_for_nova_server(base):
     network_id = create_a_network(base, name=n_name)
     base.addCleanup(delete_a_network, base, network_id)
 
-    subnet_id = create_a_subnet(base, network_id, "192.168.199.0/24")
+    subnet_id = create_a_subnet(base, network_id, cidr)
     base.addCleanup(delete_a_subnet, base, subnet_id)
 
 
@@ -147,14 +156,29 @@ def list_clusters(base):
     return res['body']
 
 
+def _return_last_value(retry_state):
+    return retry_state.outcome.result()
+
+
+@tenacity.retry(
+    retry=(tenacity.retry_if_exception_type(exceptions.Conflict) |
+           tenacity.retry_if_result(lambda x: x is False)),
+    wait=tenacity.wait_fixed(2),
+    retry_error_callback=_return_last_value,
+    stop=tenacity.stop_after_attempt(5)
+)
 def delete_a_cluster(base, cluster_id, wait_timeout=None):
     """Utility function that deletes a Senlin cluster."""
     res = base.client.delete_obj('clusters', cluster_id)
     action_id = res['location'].split('/actions/')[1]
-    base.client.wait_for_status('actions', action_id, 'SUCCEEDED',
-                                wait_timeout)
+
+    action = base.client.wait_for_status(
+        'actions', action_id, ['SUCCEEDED', 'FAILED'], wait_timeout)
+    if action['body']['status'] == 'FAILED':
+        return False
+
     base.client.wait_for_delete("clusters", cluster_id, wait_timeout)
-    return
+    return True
 
 
 def create_a_node(base, profile_id, cluster_id=None, metadata=None,
@@ -285,6 +309,13 @@ def cluster_attach_policy(base, cluster_id, policy_id,
     return res['body']['status_reason']
 
 
+@tenacity.retry(
+    retry=(tenacity.retry_if_exception_type(exceptions.Conflict) |
+           tenacity.retry_if_result(lambda x: x is False)),
+    wait=tenacity.wait_fixed(2),
+    retry_error_callback=_return_last_value,
+    stop=tenacity.stop_after_attempt(5)
+)
 def cluster_detach_policy(base, cluster_id, policy_id,
                           expected_status='SUCCEEDED', wait_timeout=None):
     """Utility function that detach a policy from cluster."""
@@ -296,8 +327,12 @@ def cluster_detach_policy(base, cluster_id, policy_id,
     }
     res = base.client.trigger_action('clusters', cluster_id, params=params)
     action_id = res['location'].split('/actions/')[1]
-    res = base.client.wait_for_status('actions', action_id, expected_status,
-                                      wait_timeout)
+
+    res = base.client.wait_for_status(
+        'actions', action_id, ['SUCCEEDED', 'FAILED'], wait_timeout)
+    if res['body']['status'] == 'FAILED':
+        return False
+
     return res['body']['status_reason']
 
 
@@ -590,16 +625,46 @@ def post_messages(base, queue_name, messages):
         raise Exception(msg)
 
 
-def start_http_server(port):
-    return subprocess.Popen(
-        ['python', '-m', 'SimpleHTTPServer', port], cwd='/tmp',
-        stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    )
+def start_http_server(port=5050):
+    def _get_http_handler_class(filename):
+        class StaticHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+
+            def do_GET(self):
+                data = b'healthy\n'
+                self.send_response(http.OK)
+                self.send_header('Content-Length', str(len(data)))
+                self.end_headers()
+                self.wfile.write(data)
+                return
+
+            def log_message(self, fmt, *args):
+                msg = fmt % args
+                with open(filename, 'a+') as tmp:
+                    tmp.write("%s\n" % msg)
+                return
+
+        return StaticHTTPRequestHandler
+
+    server_address = ('127.0.0.1', port)
+    new_file, filename = tempfile.mkstemp()
+    handler_class = _get_http_handler_class(filename)
+    httpd = BaseHTTPServer.HTTPServer(server_address, handler_class)
+
+    pid = os.fork()
+    if pid == 0:
+        httpd.serve_forever()
+    else:
+        return pid, filename
 
 
-def terminate_http_server(p):
-    if not p.poll():
-        p.terminate()
-        return p.stdout.read()
+def terminate_http_server(pid, filename):
+    os.kill(pid, signal.SIGKILL)
 
-    return
+    if not os.path.isfile(filename):
+        return ''
+
+    with open(filename, 'r') as f:
+        contents = f.read()
+
+    os.remove(filename)
+    return contents

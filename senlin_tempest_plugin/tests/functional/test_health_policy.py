@@ -19,7 +19,6 @@ from senlin_tempest_plugin.common import utils
 from senlin_tempest_plugin.tests.functional import base
 
 
-@decorators.skip_because(bug=1797270)
 class TestHealthPolicy(base.BaseSenlinFunctionalTest):
     def setUp(self):
         super(TestHealthPolicy, self).setUp()
@@ -39,19 +38,30 @@ class TestHealthPolicy(base.BaseSenlinFunctionalTest):
         policy_id = utils.create_a_policy(self, spec)
         del_policy = utils.get_a_policy(self, policy_id)
         self.addCleanup(utils.delete_a_policy, self, del_policy['id'], True)
-        http_server = utils.start_http_server('5050')
-        self.addCleanup(utils.terminate_http_server, http_server)
+        http_server, log_file = utils.start_http_server()
+        self.addCleanup(utils.terminate_http_server, http_server, log_file)
+
+        def detach_policy():
+            # ignore BadRequest exceptions that are raised because
+            # policy is not attached
+            try:
+                utils.cluster_detach_policy(self, self.cluster_id,
+                                            del_policy['id'])
+
+                # wait to let health checks stop
+                time.sleep(5)
+            except exc.BadRequest:
+                pass
 
         # Attach health policy to cluster
         utils.cluster_attach_policy(self, self.cluster_id, del_policy['id'])
-        self.addCleanup(utils.cluster_detach_policy, self, self.cluster_id,
-                        del_policy['id'])
+        self.addCleanup(detach_policy)
 
         # wait for health checks to run
         time.sleep(15)
 
         # check that URL was queried for each node as part of health check
-        out = utils.terminate_http_server(http_server)
+        out = utils.terminate_http_server(http_server, log_file)
         self.assertTrue(out.count('GET') >= 1)
 
     @decorators.attr(type=['functional'])
