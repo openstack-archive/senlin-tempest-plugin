@@ -17,7 +17,7 @@ spec_nova_server = {
     "properties": {
         "flavor": "1",
         "name": "new-server-test",
-        "image": "cirros-0.3.5-x86_64-disk",
+        "image": "cirros-0.3.6-x86_64-disk",
         "networks": [
             {"network": "private"}
         ]
