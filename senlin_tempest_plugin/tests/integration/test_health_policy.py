@@ -19,17 +19,31 @@ from senlin_tempest_plugin.common import utils
 from senlin_tempest_plugin.tests.integration import base
 
 
-@decorators.skip_because(bug=1797270)
 class TestHealthPolicy(base.BaseSenlinIntegrationTest):
     def setUp(self):
         super(TestHealthPolicy, self).setUp()
 
+        spec = constants.spec_nova_server
+        spec['properties']['networks'][0]['network'] = 'private-hp'
+        utils.prepare_and_cleanup_for_nova_server(self, "192.168.199.0/24",
+                                                  spec)
         self.profile_id = utils.create_a_profile(self)
         self.addCleanup(utils.delete_a_profile, self, self.profile_id)
         self.cluster_id = utils.create_a_cluster(self, self.profile_id,
                                                  min_size=0, max_size=5,
                                                  desired_capacity=1)
         self.addCleanup(utils.delete_a_cluster, self, self.cluster_id)
+
+    def _detach_policy(self, policy_id):
+        # ignore BadRequest exceptions that are raised because
+        # policy is not attached
+        try:
+            utils.cluster_detach_policy(self, self.cluster_id, policy_id)
+
+            # wait to let health checks stop
+            time.sleep(5)
+        except exceptions.BadRequest:
+            pass
 
     @decorators.attr(type=['integration'])
     def test_health_policy(self):
@@ -38,19 +52,18 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
         policy_id = utils.create_a_policy(self, spec)
         del_policy = utils.get_a_policy(self, policy_id)
         self.addCleanup(utils.delete_a_policy, self, del_policy['id'], True)
-        http_server = utils.start_http_server('5050')
-        self.addCleanup(utils.terminate_http_server, http_server)
+        http_server, log_file = utils.start_http_server()
+        self.addCleanup(utils.terminate_http_server, http_server, log_file)
 
         # Attach health policy to cluster
         utils.cluster_attach_policy(self, self.cluster_id, del_policy['id'])
-        self.addCleanup(utils.cluster_detach_policy, self, self.cluster_id,
-                        del_policy['id'])
+        self.addCleanup(self._detach_policy, del_policy['id'])
 
         # wait for health checks to run
         time.sleep(5)
 
         # check that URL was queried for each node as part of health check
-        out = utils.terminate_http_server(http_server)
+        out = utils.terminate_http_server(http_server, log_file)
         self.assertTrue(out.count('GET') == 1)
 
     def _get_node(self, expected_len, index):
@@ -62,7 +75,7 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
         }
         self.assertTrue(len(nodes) == expected_len)
 
-        return nodes.keys()[index], nodes.values()[index]
+        return list(nodes.keys())[index], list(nodes.values())[index]
 
     @decorators.attr(type=['integration'])
     def test_multiple_detection_modes_any(self):
@@ -72,8 +85,8 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
         policy_id = utils.create_a_policy(self, spec)
         del_policy = utils.get_a_policy(self, policy_id)
         self.addCleanup(utils.delete_a_policy, self, del_policy['id'], True)
-        http_server = utils.start_http_server('5050')
-        self.addCleanup(utils.terminate_http_server, http_server)
+        http_server, log_file = utils.start_http_server()
+        self.addCleanup(utils.terminate_http_server, http_server, log_file)
 
         # manually shutdown server
         node_id, server_id = self._get_node(1, 0)
@@ -86,8 +99,7 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
 
         # Attach health policy to cluster
         utils.cluster_attach_policy(self, self.cluster_id, del_policy['id'])
-        self.addCleanup(utils.cluster_detach_policy, self, self.cluster_id,
-                        del_policy['id'])
+        self.addCleanup(self._detach_policy, del_policy['id'])
 
         # wait for health checks to run and recover node
         time.sleep(15)
@@ -114,8 +126,8 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
         policy_id = utils.create_a_policy(self, spec)
         del_policy = utils.get_a_policy(self, policy_id)
         self.addCleanup(utils.delete_a_policy, self, del_policy['id'], True)
-        http_server = utils.start_http_server('5050')
-        self.addCleanup(utils.terminate_http_server, http_server)
+        http_server, log_file = utils.start_http_server()
+        self.addCleanup(utils.terminate_http_server, http_server, log_file)
 
         # manually shutdown server
         node_id, server_id = self._get_node(1, 0)
@@ -128,8 +140,7 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
 
         # Attach health policy to cluster
         utils.cluster_attach_policy(self, self.cluster_id, del_policy['id'])
-        self.addCleanup(utils.cluster_detach_policy, self, self.cluster_id,
-                        del_policy['id'])
+        self.addCleanup(self._detach_policy, del_policy['id'])
 
         # wait for health checks to run
         time.sleep(15)
@@ -144,7 +155,7 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
 
         # check that URL was queried because ALL_FAILED
         # was specified in the policy
-        out = utils.terminate_http_server(http_server)
+        out = utils.terminate_http_server(http_server, log_file)
         self.assertTrue(out.count('GET') >= 0)
 
         # wait for health checks to run and recover node
@@ -178,8 +189,7 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
 
         # Attach health policy to cluster without http server running
         utils.cluster_attach_policy(self, self.cluster_id, del_policy['id'])
-        self.addCleanup(utils.cluster_detach_policy, self, self.cluster_id,
-                        del_policy['id'])
+        self.addCleanup(self._detach_policy, del_policy['id'])
 
         # wait for health checks to run
         time.sleep(15)

@@ -84,7 +84,7 @@ class ClusteringAPIClient(rest_client.RestClient):
 
     def delete_obj(self, obj_type, obj_id):
         uri = '{0}/{1}/{2}'.format(self.version, obj_type, obj_id)
-        resp, body = self.delete(uri)
+        resp, body = self.request('DELETE', uri)
 
         return self.get_resp(resp, body)
 
@@ -106,7 +106,7 @@ class ClusteringAPIClient(rest_client.RestClient):
         uri = '{0}/{1}/{2}/actions'.format(self.version, obj_type, obj_id)
         if params is not None:
             params = jsonutils.dumps(params)
-        resp, body = self.post(uri, body=params)
+        resp, body = self.request('POST', uri, body=params)
 
         return self.get_resp(resp, body)
 
@@ -148,6 +148,11 @@ class ClusteringAPIClient(rest_client.RestClient):
         return self.get_resp(resp, body)
 
     def wait_for_status(self, obj_type, obj_id, expected_status, timeout=None):
+        if isinstance(expected_status, list):
+            expected_status_list = expected_status
+        else:
+            expected_status_list = [expected_status]
+
         if timeout is None:
             timeout = CONF.clustering.wait_timeout
 
@@ -155,7 +160,7 @@ class ClusteringAPIClient(rest_client.RestClient):
             while timeout > 0:
                 time.sleep(5)
                 res = self.get_obj(obj_type, obj_id)
-                if res['body']['status'] == expected_status:
+                if res['body']['status'] in expected_status_list:
                     return res
                 timeout = timeout_watch.leftover(True)
 
