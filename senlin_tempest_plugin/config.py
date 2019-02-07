@@ -27,5 +27,21 @@ ClusteringGroup = [
                help="Catalog type of the clustering service."),
     cfg.IntOpt("wait_timeout",
                default=180,
-               help="Waiting time for a specific status, in seconds.")
+               help="Waiting time for a specific status, in seconds."),
+    cfg.StrOpt('min_microversion',
+               default=None,
+               help="Lower version of the test target microversion range. "
+                    "The format is 'X.Y', where 'X' and 'Y' are int values. "
+                    "Tempest selects tests based on the range between "
+                    "min_microversion and max_microversion. If both values "
+                    "are None, Tempest avoids tests which require a "
+                    "microversion."),
+    cfg.StrOpt('max_microversion',
+               default='latest',
+               help="Upper version of the test target microversion range. "
+                    "The format is 'X.Y'. where 'X' and 'Y' are int values. "
+                    "Tempest selects tests based on the range between "
+                    "microversion and max_microversion. If both values "
+                    "are None, Tempest avoids tests which require a "
+                    "microversion.")
 ]
