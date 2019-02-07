@@ -12,6 +12,7 @@
 
 from tempest.lib import decorators
 from tempest.lib import exceptions as exc
+import testtools
 import time
 
 from senlin_tempest_plugin.common import constants
@@ -19,6 +20,8 @@ from senlin_tempest_plugin.common import utils
 from senlin_tempest_plugin.tests.functional import base
 
 
+@testtools.skipUnless(utils.is_policy_supported('senlin.policy.health-1.1'),
+                      "senlin.policy.health-1.1 is not supported")
 class TestHealthPolicy(base.BaseSenlinFunctionalTest):
     def setUp(self):
         super(TestHealthPolicy, self).setUp()
