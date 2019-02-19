@@ -10,12 +10,17 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from tempest import config
+from tempest.lib.common import api_version_utils
 from tempest.lib import decorators
 from tempest.lib import exceptions
 import time
 
 from senlin_tempest_plugin.common import utils
 from senlin_tempest_plugin.tests.api import base
+
+
+CONF = config.CONF
 
 
 class TestClusterActionScaleOut(base.BaseSenlinAPITest):
@@ -119,6 +124,17 @@ class TestClusterScaleOutNegativeNotFound(base.BaseSenlinAPITest):
 
 
 class TestClusterScaleOutNegativeResourceIsLocked(base.BaseSenlinAPITest):
+
+    min_microversion = '1.11'
+    max_microversion = 'latest'
+
+    @classmethod
+    def skip_checks(cls):
+        super(base.BaseSenlinAPITest, cls).skip_checks()
+        api_version_utils.check_skip_with_microversion(
+            cls.min_microversion, cls.max_microversion,
+            CONF.clustering.min_microversion,
+            CONF.clustering.max_microversion)
 
     def setUp(self):
         super(TestClusterScaleOutNegativeResourceIsLocked, self).setUp()
