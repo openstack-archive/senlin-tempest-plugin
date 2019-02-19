@@ -23,6 +23,7 @@ class TestNovaServerCluster(base.BaseSenlinIntegrationNonAdminTest):
 
     def setUp(self):
         super(TestNovaServerCluster, self).setUp()
+        self.spec = utils.create_spec_from_config()
         utils.prepare_and_cleanup_for_nova_server(self, "192.168.199.0/24")
         self.profile_id = utils.create_a_profile(self, self.spec)
         self.addCleanup(utils.delete_a_profile, self, self.profile_id)

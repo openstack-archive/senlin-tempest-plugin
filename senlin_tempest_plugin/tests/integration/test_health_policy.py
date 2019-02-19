@@ -26,7 +26,7 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
     def setUp(self):
         super(TestHealthPolicy, self).setUp()
 
-        spec = constants.spec_nova_server
+        spec = utils.create_spec_from_config()
         spec['properties']['networks'][0]['network'] = 'private-hp'
         utils.prepare_and_cleanup_for_nova_server(self, "192.168.199.0/24",
                                                   spec)

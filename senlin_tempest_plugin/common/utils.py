@@ -20,10 +20,13 @@ from stevedore import extension
 import tempfile
 import tenacity
 
+from tempest import config
 from tempest.lib.common.utils import data_utils
 from tempest.lib import exceptions
 
 from senlin_tempest_plugin.common import constants
+
+CONF = config.CONF
 
 
 def api_microversion(api_microversion):
@@ -69,6 +72,16 @@ def prepare_and_cleanup_for_nova_server(base, cidr, spec=None):
 
     subnet_id = create_a_subnet(base, network_id, cidr)
     base.addCleanup(delete_a_subnet, base, subnet_id)
+
+
+def create_spec_from_config():
+    """Utility function that creates a spec object from tempest config"""
+    spec = constants.spec_nova_server
+
+    spec['properties']['flavor'] = CONF.compute.flavor_ref
+    spec['properties']['image'] = CONF.compute.image_ref
+
+    return spec
 
 
 def create_a_profile(base, spec=None, name=None, metadata=None):
