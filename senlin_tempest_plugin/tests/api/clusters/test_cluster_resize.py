@@ -124,14 +124,9 @@ class TestClusterResizeNegativeInvalidResizeParams(base.BaseSenlinAPITest):
         }
 
         # Verify badrequest exception(400) is raised.
-        ex = self.assertRaises(exceptions.BadRequest,
-                               self.client.trigger_action,
-                               'clusters', 'cluster_id', params)
-
-        message = ex.resp_body['error']['message']
-        self.assertEqual(
-            "The 'number' must be positive integer for adjustment "
-            "type 'EXACT_CAPACITY'.", str(message))
+        self.assertRaises(exceptions.BadRequest,
+                          self.client.trigger_action,
+                          'clusters', 'cluster_id', params)
 
     @decorators.idempotent_id('5a069782-d6d8-4389-a68c-beb32375a39e')
     def test_cluster_resize_min_size_over_max_size(self):
