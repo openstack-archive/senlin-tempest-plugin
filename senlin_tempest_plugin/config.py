@@ -43,5 +43,9 @@ ClusteringGroup = [
                     "Tempest selects tests based on the range between "
                     "microversion and max_microversion. If both values "
                     "are None, Tempest avoids tests which require a "
-                    "microversion.")
+                    "microversion."),
+    cfg.BoolOpt('delete_with_dependency',
+                default=False,
+                help="Enables tests that delete clusters with resources such "
+                     "as policies or receivers attached to it.")
 ]
