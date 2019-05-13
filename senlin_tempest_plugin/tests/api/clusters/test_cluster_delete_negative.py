@@ -17,68 +17,6 @@ from senlin_tempest_plugin.common import utils
 from senlin_tempest_plugin.tests.api import base
 
 
-class TestClusterDeleteNegativePolicyConflict(base.BaseSenlinAPITest):
-
-    def setUp(self):
-        super(TestClusterDeleteNegativePolicyConflict, self).setUp()
-        profile_id = utils.create_a_profile(self)
-        self.addCleanup(utils.delete_a_profile, self, profile_id)
-
-        self.cluster_id = utils.create_a_cluster(self, profile_id)
-        self.addCleanup(utils.delete_a_cluster, self, self.cluster_id)
-
-        policy_id = utils.create_a_policy(self)
-        self.addCleanup(utils.delete_a_policy, self, policy_id)
-
-        utils.cluster_attach_policy(self, self.cluster_id, policy_id)
-        self.addCleanup(utils.cluster_detach_policy, self, self.cluster_id,
-                        policy_id)
-
-    @decorators.attr(type=['negative'])
-    @decorators.idempotent_id('0de81427-2b2f-4821-9462-c893d35fb212')
-    def test_cluster_delete_policy_conflict(self):
-        # Verify conflict exception(409) is raised.
-        ex = self.assertRaises(exceptions.Conflict,
-                               self.client.delete_obj,
-                               'clusters', self.cluster_id)
-
-        message = ex.resp_body['error']['message']
-        self.assertEqual(
-            "The cluster '%s' cannot be deleted: there is still "
-            "policy(s) attached to it." % self.cluster_id,
-            str(message))
-
-
-class TestClusterDeleteNegativeReceiverConflict(base.BaseSenlinAPITest):
-
-    def setUp(self):
-        super(TestClusterDeleteNegativeReceiverConflict, self).setUp()
-        profile_id = utils.create_a_profile(self)
-        self.addCleanup(utils.delete_a_profile, self, profile_id)
-
-        self.cluster_id = utils.create_a_cluster(self, profile_id)
-        self.addCleanup(utils.delete_a_cluster, self, self.cluster_id)
-
-        self.receiver_id = utils.create_a_receiver(
-            self, self.cluster_id, 'CLUSTER_SCALE_OUT', 'webhook',
-            'fake', params={'count': '1'})
-        self.addCleanup(utils.delete_a_receiver, self, self.receiver_id)
-
-    @decorators.attr(type=['negative'])
-    @decorators.idempotent_id('0de81427-2b2f-4821-9462-c893d35fb212')
-    def test_cluster_delete_receiver_conflict(self):
-        # Verify conflict exception(409) is raised.
-        ex = self.assertRaises(exceptions.Conflict,
-                               self.client.delete_obj,
-                               'clusters', self.cluster_id)
-
-        message = ex.resp_body['error']['message']
-        self.assertEqual(
-            "The cluster '%s' cannot be deleted: there is still "
-            "receiver(s) associated with it." % self.cluster_id,
-            str(message))
-
-
 class TestClusterDeleteNegativeNotFound(base.BaseSenlinAPITest):
 
     @decorators.attr(type=['negative'])
