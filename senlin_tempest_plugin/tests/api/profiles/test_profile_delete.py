@@ -28,4 +28,3 @@ class TestProfileDelete(base.BaseSenlinAPITest):
         res = self.client.delete_obj('profiles', self.profile_id)
         self.assertEqual(204, res['status'])
         self.assertIsNone(res['body'])
-        self.assertEqual('0', res['content-length'])

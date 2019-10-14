@@ -35,4 +35,3 @@ class TestReceiverDelete(base.BaseSenlinAPITest):
         res = self.client.delete_obj('receivers', self.receiver_id)
         self.assertEqual(204, res['status'])
         self.assertIsNone(res['body'])
-        self.assertEqual('0', res['content-length'])
