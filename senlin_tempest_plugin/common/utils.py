@@ -16,7 +16,6 @@ import os
 import signal
 from six.moves import BaseHTTPServer
 from six.moves import http_client as http
-from stevedore import extension
 import tempfile
 import tenacity
 
@@ -40,19 +39,6 @@ def api_microversion(api_microversion):
             self.client.api_microversion = old
         return wrapped
     return decorator
-
-
-def is_policy_supported(policy_name_and_version):
-    """Check if specified policy is supported
-
-    :param policy_name_and_version: Combined string of policy name and version.
-    E.g. senlin.policy.scaling-1.0
-    :returns: True if policy_name_and_version is supported. False otherwise.
-    """
-    mgr = extension.ExtensionManager(
-        namespace='senlin.policies',
-        invoke_on_load=False)
-    return policy_name_and_version in mgr.names()
 
 
 def prepare_and_cleanup_for_nova_server(base, cidr, spec=None):

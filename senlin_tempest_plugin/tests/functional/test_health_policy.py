@@ -10,18 +10,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from tempest import config
 from tempest.lib import decorators
 from tempest.lib import exceptions as exc
-import testtools
 import time
 
 from senlin_tempest_plugin.common import constants
 from senlin_tempest_plugin.common import utils
 from senlin_tempest_plugin.tests.functional import base
 
+CONF = config.CONF
 
-@testtools.skipUnless(utils.is_policy_supported('senlin.policy.health-1.1'),
-                      "senlin.policy.health-1.1 is not supported")
+
 class TestHealthPolicy(base.BaseSenlinFunctionalTest):
     def setUp(self):
         super(TestHealthPolicy, self).setUp()
@@ -32,6 +32,14 @@ class TestHealthPolicy(base.BaseSenlinFunctionalTest):
                                                  min_size=0, max_size=5,
                                                  desired_capacity=1)
         self.addCleanup(utils.delete_a_cluster, self, self.cluster_id)
+
+    @classmethod
+    def skip_checks(cls):
+        super(TestHealthPolicy, cls).skip_checks()
+        if CONF.clustering.health_policy_version != '1.1':
+            skip_msg = ("%s skipped as only Health Policy 1.1 is supported" %
+                        cls.__name__)
+            raise cls.skipException(skip_msg)
 
     @decorators.attr(type=['functional'])
     @decorators.idempotent_id('adfd813c-08c4-4650-9b66-a1a6e63b842e')

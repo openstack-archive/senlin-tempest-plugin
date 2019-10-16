@@ -10,18 +10,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from tempest import config
 from tempest.lib import decorators
 from tempest.lib import exceptions
-import testtools
 import time
 
 from senlin_tempest_plugin.common import constants
 from senlin_tempest_plugin.common import utils
 from senlin_tempest_plugin.tests.integration import base
 
+CONF = config.CONF
 
-@testtools.skipUnless(utils.is_policy_supported('senlin.policy.health-1.1'),
-                      "senlin.policy.health-1.1 is not supported")
+
 class TestHealthPolicy(base.BaseSenlinIntegrationTest):
     def setUp(self):
         super(TestHealthPolicy, self).setUp()
@@ -36,6 +36,14 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
                                                  min_size=0, max_size=5,
                                                  desired_capacity=1)
         self.addCleanup(utils.delete_a_cluster, self, self.cluster_id)
+
+    @classmethod
+    def skip_checks(cls):
+        super(TestHealthPolicy, cls).skip_checks()
+        if CONF.clustering.health_policy_version != '1.1':
+            skip_msg = ("%s skipped as only Health Policy 1.1 is supported" %
+                        cls.__name__)
+            raise cls.skipException(skip_msg)
 
     def _detach_policy(self, policy_id):
         # ignore BadRequest exceptions that are raised because
@@ -80,6 +88,7 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
 
         return list(nodes.keys())[index], list(nodes.values())[index]
 
+    @decorators.idempotent_id('52f34125-3d6e-4250-9d2e-b619a2905969')
     @decorators.attr(type=['integration'])
     def test_multiple_detection_modes_any(self):
         # Create a health policy

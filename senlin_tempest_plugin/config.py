@@ -47,5 +47,8 @@ ClusteringGroup = [
     cfg.BoolOpt('delete_with_dependency',
                 default=False,
                 help="Enables tests that delete clusters with resources such "
-                     "as policies or receivers attached to it.")
+                     "as policies or receivers attached to it."),
+    cfg.StrOpt('health_policy_version',
+               default='1.0',
+               help='Supported version of the health policy.'),
 ]
