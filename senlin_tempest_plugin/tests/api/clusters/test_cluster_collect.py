@@ -71,8 +71,8 @@ class TestClusterCollectNegative(base.BaseSenlinAPITest):
         self.assertEqual("API version '1.1' is not supported on this method.",
                          str(message))
 
+    @decorators.idempotent_id('1b080a66-9c76-4321-9d88-74e38eb44df7')
     @utils.api_microversion('1.2')
-    @decorators.idempotent_id('a3d59666-93be-47ee-a484-c248ed2f49fe')
     def test_cluster_collect_failed_path(self):
         # Collect on a basic path
         ex = self.assertRaises(exceptions.BadRequest,

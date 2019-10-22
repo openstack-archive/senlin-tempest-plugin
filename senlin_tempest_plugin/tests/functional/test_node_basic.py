@@ -87,6 +87,7 @@ class TestNodeUpdate(base.BaseSenlinFunctionalTest):
         self.node_id = utils.create_a_node(self, self.profile_id)
         self.addCleanup(utils.delete_a_node, self, self.node_id)
 
+    @utils.api_microversion('1.12')
     @decorators.attr(type=['functional'])
     @decorators.idempotent_id('d373fb1d-33a1-434f-a850-fb78eff15d18')
     def test_node_update_basic_properties(self):
@@ -103,6 +104,46 @@ class TestNodeUpdate(base.BaseSenlinFunctionalTest):
         self.assertEqual(name, node['name'])
         self.assertEqual(metadata, node['metadata'])
         self.assertEqual(role, node['role'])
+        self.assertNotIn('tainted', node)
+
+    @decorators.idempotent_id('eac6704f-9a2c-4ed4-9d26-9a5eb4d20bb3')
+    @utils.api_microversion('1.13')
+    @decorators.attr(type=['functional'])
+    def test_node_update_basic_properties_v1_13(self):
+        name = 'new-name'
+        role = 'new-role'
+        metadata = {'k2': 'v2'}
+
+        # Update node
+        utils.update_a_node(self, self.node_id, name=name, metadata=metadata,
+                            role=role)
+
+        # Verify update result
+        node = utils.get_a_node(self, self.node_id)
+        self.assertEqual(name, node['name'])
+        self.assertEqual(metadata, node['metadata'])
+        self.assertEqual(role, node['role'])
+        self.assertEqual(False, node['tainted'])
+
+    @decorators.idempotent_id('598f3a1f-d4f1-4ee1-bae3-c1df23f93398')
+    @utils.api_microversion('1.13')
+    @decorators.attr(type=['functional'])
+    def test_node_update_basic_properties__with_tainted_v1_13(self):
+        name = 'new-name'
+        role = 'new-role'
+        metadata = {'k2': 'v2'}
+        tainted = True
+
+        # Update node
+        utils.update_a_node(self, self.node_id, name=name, metadata=metadata,
+                            role=role, tainted=tainted)
+
+        # Verify update result
+        node = utils.get_a_node(self, self.node_id)
+        self.assertEqual(name, node['name'])
+        self.assertEqual(metadata, node['metadata'])
+        self.assertEqual(role, node['role'])
+        self.assertEqual(tainted, node['tainted'])
 
     @decorators.attr(type=['functional'])
     @decorators.idempotent_id('361e051d-b55b-4943-8a01-462f6fc5be43')

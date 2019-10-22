@@ -97,7 +97,7 @@ class TestEventListNegativeBadRequest(base.BaseSenlinAPITest):
                          str(message))
 
     @decorators.attr(type=['negative'])
-    @decorators.idempotent_id('72e0fd48-2dc7-47ce-abad-299e508fabd4')
+    @decorators.idempotent_id('7a6c1133-733b-481f-98d0-3e4a2d55e027')
     def test_event_list_unsupported_action(self):
         ex = self.assertRaises(exceptions.BadRequest,
                                self.client.list_objs,

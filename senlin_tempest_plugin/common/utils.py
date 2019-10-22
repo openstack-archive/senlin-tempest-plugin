@@ -255,7 +255,8 @@ def list_nodes(base):
 
 
 def update_a_node(base, node_id, profile_id=None, name=None,
-                  metadata=None, role=None, wait_timeout=None):
+                  metadata=None, tainted=None, role=None,
+                  wait_timeout=None):
     """Utility function that updates a Senlin node.
 
     Update a node and return it after it is ACTIVE.
@@ -268,6 +269,9 @@ def update_a_node(base, node_id, profile_id=None, name=None,
             'role': role
         }
     }
+    if tainted is not None:
+        params['node']['tainted'] = tainted
+
     res = base.client.update_obj('nodes', node_id, params)
     action_id = res['location'].split('/actions/')[1]
     base.client.wait_for_status('actions', action_id, 'SUCCEEDED',

@@ -26,8 +26,27 @@ class TestNodeList(base.BaseSenlinAPITest):
         self.node_id = utils.create_a_node(self, profile_id)
         self.addCleanup(utils.delete_a_node, self, self.node_id)
 
+    @utils.api_microversion('1.12')
     @decorators.idempotent_id('cd086dcb-7509-4125-adfc-6beb63b10d0a')
     def test_node_list(self):
+        expected_keys = ['cluster_id', 'created_at', 'data', 'domain',
+                         'id', 'index', 'init_at', 'metadata', 'name',
+                         'physical_id', 'profile_id', 'profile_name',
+                         'project', 'role', 'status', 'status_reason',
+                         'updated_at', 'user']
+        self._list_node(expected_keys)
+
+    @decorators.idempotent_id('f7cc5f8a-8aed-468f-ad03-883071371c5d')
+    @utils.api_microversion('1.13')
+    def test_node_list_v1_13(self):
+        expected_keys = ['cluster_id', 'created_at', 'data', 'domain',
+                         'id', 'index', 'init_at', 'metadata', 'name',
+                         'physical_id', 'profile_id', 'profile_name',
+                         'project', 'role', 'status', 'status_reason',
+                         'updated_at', 'user']
+        self._list_node(expected_keys)
+
+    def _list_node(self, expected_keys):
         res = self.client.list_objs('nodes')
 
         # Verify resp of node list API
@@ -37,11 +56,7 @@ class TestNodeList(base.BaseSenlinAPITest):
         nodes = res['body']
         node_ids = []
         for node in nodes:
-            for key in ['cluster_id', 'created_at', 'data', 'domain',
-                        'id', 'index', 'init_at', 'metadata', 'name',
-                        'physical_id', 'profile_id', 'profile_name',
-                        'project', 'role', 'status', 'status_reason',
-                        'updated_at', 'user']:
+            for key in expected_keys:
                 self.assertIn(key, node)
             node_ids.append(node['id'])
 

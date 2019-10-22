@@ -146,6 +146,7 @@ class TestClusterScaleOutNegativeResourceIsLocked(base.BaseSenlinAPITest):
         self.cluster_id = utils.create_a_cluster(self, profile_id)
         self.addCleanup(utils.delete_a_cluster, self, self.cluster_id)
 
+    @decorators.idempotent_id('3ecc8a73-03b2-4937-bb98-5b49554baf06')
     def test_cluster_action_scale_out_locked_cluster(self):
         params = {
             "scale_out": {

@@ -30,8 +30,8 @@ class TestPolicyTypeList(base.BaseSenlinAPITest):
         for policy_type in policy_types:
             self.assertIn('name', policy_type)
 
+    @decorators.idempotent_id('35efa810-ef80-4a8a-b73f-55d62434108d')
     @utils.api_microversion('1.5')
-    @decorators.idempotent_id('1900b22a-012d-41f0-85a2-8aa6b65ec2ca')
     def test_policy_type_list_v1_5(self):
         res = self.client.list_objs('policy-types')
 
