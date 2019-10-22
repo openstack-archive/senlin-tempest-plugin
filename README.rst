@@ -21,7 +21,7 @@ For more information about Tempest plugins see:
 https://docs.openstack.org/tempest/latest/plugin.html
 
 * Free software: Apache license
-* Source: http://opendev.org/openstack/senlin-tempest-plugin
+* Source: https://opendev.org/openstack/senlin-tempest-plugin
 
 Installing
 ----------
