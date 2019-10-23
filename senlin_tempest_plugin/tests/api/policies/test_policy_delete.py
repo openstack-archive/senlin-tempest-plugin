@@ -28,4 +28,3 @@ class TestPolicyDelete(base.BaseSenlinAPITest):
         res = self.client.delete_obj('policies', self.policy_id)
         self.assertEqual(204, res['status'])
         self.assertIsNone(res['body'])
-        self.assertEqual('0', res['content-length'])
