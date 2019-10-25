@@ -27,8 +27,26 @@ class TestNodeCreate(base.BaseSenlinAPITest):
             config={'node.name.format': 'test-node'})
         self.addCleanup(utils.delete_a_cluster, self, self.cluster_id)
 
+    @utils.api_microversion('1.12')
     @decorators.idempotent_id('14d06753-7f0a-4ad2-84be-37fce7114a8f')
     def test_node_create_all_attrs_defined(self):
+        expected_keys = ['cluster_id', 'created_at', 'data', 'domain', 'id',
+                         'index', 'init_at', 'metadata', 'name', 'physical_id',
+                         'profile_id', 'profile_name', 'project', 'role',
+                         'status', 'status_reason', 'updated_at', 'user']
+        self._create_node(expected_keys)
+
+    @decorators.idempotent_id('b678a196-01bf-42cb-a079-9595d937d211')
+    @utils.api_microversion('1.13')
+    def test_node_create_all_attrs_defined_v1_13(self):
+        expected_keys = ['cluster_id', 'created_at', 'data', 'domain', 'id',
+                         'index', 'init_at', 'metadata', 'name', 'physical_id',
+                         'profile_id', 'profile_name', 'project', 'role',
+                         'status', 'status_reason', 'tainted',
+                         'updated_at', 'user']
+        self._create_node(expected_keys)
+
+    def _create_node(self, expected_keys):
         params = {
             'node': {
                 'profile_id': self.profile_id,
@@ -46,10 +64,7 @@ class TestNodeCreate(base.BaseSenlinAPITest):
         self.assertIn('actions', res['location'])
         node = res['body']
         self.addCleanup(utils.delete_a_node, self, node['id'])
-        for key in ['cluster_id', 'created_at', 'data', 'domain', 'id',
-                    'index', 'init_at', 'metadata', 'name', 'physical_id',
-                    'profile_id', 'profile_name', 'project', 'role',
-                    'status', 'status_reason', 'updated_at', 'user']:
+        for key in expected_keys:
             self.assertIn(key, node)
         self.assertIn('test-node', node['name'])
         self.assertEqual(self.profile_id, node['profile_id'])

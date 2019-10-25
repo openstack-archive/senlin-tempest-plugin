@@ -57,6 +57,7 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
             pass
 
     @decorators.attr(type=['integration'])
+    @decorators.idempotent_id('d40ae276-2cbc-4073-b71d-0854ddf8c6a1')
     def test_health_policy(self):
         # Create a health policy
         spec = constants.spec_health_policy
@@ -90,6 +91,7 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
 
     @decorators.idempotent_id('52f34125-3d6e-4250-9d2e-b619a2905969')
     @decorators.attr(type=['integration'])
+    @decorators.idempotent_id('94b0c88a-2cd0-4fff-abbd-331e8369b7b4')
     def test_multiple_detection_modes_any(self):
         # Create a health policy
         spec = constants.spec_health_policy
@@ -131,6 +133,7 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
             self.compute_client.get_obj, 'servers', old_server_id)
 
     @decorators.attr(type=['integration'])
+    @decorators.idempotent_id('7ce88abb-0a7c-48a8-91ce-59463b75c1e5')
     def test_multiple_detection_modes_all(self):
         # Create a health policy
         spec = constants.spec_health_policy
@@ -188,6 +191,7 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
             self.compute_client.get_obj, 'servers', old_server_id)
 
     @decorators.attr(type=['integration'])
+    @decorators.idempotent_id('e78e0590-2df7-423b-8f71-8037e03598f3')
     def test_multiple_detection_modes_all_poll_url_fail(self):
         # Create a health policy
         spec = constants.spec_health_policy

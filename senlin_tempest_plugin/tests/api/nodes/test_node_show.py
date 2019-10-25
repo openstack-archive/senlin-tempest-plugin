@@ -26,8 +26,27 @@ class TestNodeShow(base.BaseSenlinAPITest):
         self.node_id = utils.create_a_node(self, profile_id)
         self.addCleanup(utils.delete_a_node, self, self.node_id)
 
+    @utils.api_microversion('1.12')
     @decorators.idempotent_id('302372e8-efa2-4348-88dd-8a1829e5e26c')
     def test_node_show(self):
+        expected_keys = ['cluster_id', 'created_at', 'data', 'domain',
+                         'id', 'index', 'init_at', 'metadata', 'name',
+                         'physical_id', 'profile_id', 'profile_name',
+                         'project', 'role', 'status', 'status_reason',
+                         'updated_at', 'user']
+        self._show_node(expected_keys)
+
+    @decorators.idempotent_id('81e65048-c68b-44a1-b351-d572bd68bf06')
+    @utils.api_microversion('1.13')
+    def test_node_show_v1_13(self):
+        expected_keys = ['cluster_id', 'created_at', 'data', 'domain',
+                         'id', 'index', 'init_at', 'metadata', 'name',
+                         'physical_id', 'profile_id', 'profile_name',
+                         'project', 'role', 'status', 'status_reason',
+                         'tainted', 'updated_at', 'user']
+        self._show_node(expected_keys)
+
+    def _show_node(self, expected_keys):
         res = self.client.get_obj('nodes', self.node_id)
 
         # Verify resp of node get API
@@ -35,9 +54,5 @@ class TestNodeShow(base.BaseSenlinAPITest):
         self.assertIsNone(res['location'])
         self.assertIsNotNone(res['body'])
         node = res['body']
-        for key in ['cluster_id', 'created_at', 'data', 'domain',
-                    'id', 'index', 'init_at', 'metadata', 'name',
-                    'physical_id', 'profile_id', 'profile_name',
-                    'project', 'role', 'status', 'status_reason',
-                    'updated_at', 'user']:
+        for key in expected_keys:
             self.assertIn(key, node)

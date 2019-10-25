@@ -33,7 +33,7 @@ class TestProfileUpdateNegativeNotFound(base.BaseSenlinAPITest):
             "could not be found.", str(message))
 
     @decorators.attr(type=['negative'])
-    @decorators.idempotent_id('5fe90195-aaed-4c1f-a73a-806b3f044bf8')
+    @decorators.idempotent_id('12a6772b-baea-47cc-a689-528a8e48ae22')
     def test_profile_update_profile_no_param(self):
         ex = self.assertRaises(exceptions.BadRequest,
                                self.client.update_obj, 'profiles',
@@ -56,7 +56,7 @@ class TestProfileUpdateNegativeBadRequest(base.BaseSenlinAPITest):
         self.profile_id = profile_id
 
     @decorators.attr(type=['negative'])
-    @decorators.idempotent_id('31242de5-55ac-4589-87a1-a9940e4beca2')
+    @decorators.idempotent_id('45df7339-8fff-459a-b4e3-0aeafbcb4232')
     def test_profile_update_no_property_updated(self):
         # No property is updated
         params = {
@@ -72,7 +72,7 @@ class TestProfileUpdateNegativeBadRequest(base.BaseSenlinAPITest):
                          str(message))
 
     @decorators.attr(type=['negative'])
-    @decorators.idempotent_id('d2ca7de6-0069-48c9-b3de-ee975a2428dc')
+    @decorators.idempotent_id('0f4edfc0-78fa-414e-b995-100b67544410')
     def test_profile_update_spec_not_updatable(self):
         # Try to update spec of profile which is not allowed.
         params = {

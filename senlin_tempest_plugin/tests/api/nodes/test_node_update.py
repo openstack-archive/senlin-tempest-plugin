@@ -28,6 +28,7 @@ class TestNodeUpdate(base.BaseSenlinAPITest):
                                            role='member')
         self.addCleanup(utils.delete_a_node, self, self.node_id)
 
+    @utils.api_microversion('1.12')
     @decorators.idempotent_id('bd8a39bf-eee0-4056-aec0-0d8f8706efea')
     def test_node_update_basic_properties(self):
         # Update basic properties of node
@@ -49,6 +50,35 @@ class TestNodeUpdate(base.BaseSenlinAPITest):
                     'index', 'init_at', 'metadata', 'name', 'physical_id',
                     'profile_id', 'profile_name', 'project', 'role', 'status',
                     'status_reason', 'updated_at', 'user']:
+            self.assertIn(key, node)
+
+        # Wait for node update to be done before moving on
+        action_id = res['location'].split('/actions/')[1]
+        self.client.wait_for_status('actions', action_id, 'SUCCEEDED')
+
+    @decorators.idempotent_id('f8816054-6864-4c55-8770-6fdd66239fda')
+    @utils.api_microversion('1.13')
+    def test_node_update_basic_properties_v1_13(self):
+        # Update basic properties of node
+        params = {
+            'node': {
+                'name': 'node_new_name',
+                'role': 'admin',
+                'metadata': {'k2': 'v2'},
+                'tainted': True
+            }
+        }
+        res = self.client.update_obj('nodes', self.node_id, params)
+
+        # Verify resp of node update API
+        self.assertEqual(202, res['status'])
+        self.assertIsNotNone(res['body'])
+        self.assertIn('actions', res['location'])
+        node = res['body']
+        for key in ['cluster_id', 'created_at', 'data', 'domain', 'id',
+                    'index', 'init_at', 'metadata', 'name', 'physical_id',
+                    'profile_id', 'profile_name', 'project', 'role', 'status',
+                    'status_reason', 'tainted', 'updated_at', 'user']:
             self.assertIn(key, node)
 
         # Wait for node update to be done before moving on

@@ -35,8 +35,8 @@ class TestProfileTypeList(base.BaseSenlinAPITest):
         for profile_type in expected_profile_types:
             self.assertIn(profile_type, profile_types)
 
+    @decorators.idempotent_id('646a1f96-e1c6-4ba4-a96b-2f4a5a9efdb3')
     @utils.api_microversion('1.5')
-    @decorators.idempotent_id('778d41df-0ce0-421f-98e5-2efdcec6d995')
     def test_profile_type_list_v1_5(self):
         res = self.client.list_objs('profile-types')
 

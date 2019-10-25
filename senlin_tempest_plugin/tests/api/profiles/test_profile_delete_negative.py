@@ -43,7 +43,7 @@ class TestProfileDeleteNegativeConflict(base.BaseSenlinAPITest):
 class TestProfileDeleteNegativeNotFound(base.BaseSenlinAPITest):
 
     @decorators.attr(type=['negative'])
-    @decorators.idempotent_id('b6e7911d-5f65-4ec6-a08b-b88809fe2b9e')
+    @decorators.idempotent_id('41990227-e75c-4fc3-9503-87aa7ac06e7e')
     def test_profile_delete_not_found(self):
         # Verify notfound exception(404) is raised.
         ex = self.assertRaises(exceptions.NotFound,
