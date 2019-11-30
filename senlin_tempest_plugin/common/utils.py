@@ -60,12 +60,15 @@ def prepare_and_cleanup_for_nova_server(base, cidr, spec=None):
     base.addCleanup(delete_a_subnet, base, subnet_id)
 
 
-def create_spec_from_config():
+def create_spec_from_config(network_name=None):
     """Utility function that creates a spec object from tempest config"""
     spec = constants.spec_nova_server
 
     spec['properties']['flavor'] = CONF.compute.flavor_ref
     spec['properties']['image'] = CONF.compute.image_ref
+
+    if network_name:
+        spec['properties']['networks'][0]['network'] = network_name
 
     return spec
 
@@ -562,13 +565,18 @@ def create_a_network(base, name=None):
     return body['body']['id']
 
 
+@tenacity.retry(
+    retry=tenacity.retry_if_exception_type(exceptions.Conflict),
+    wait=tenacity.wait_fixed(5),
+    retry_error_callback=_return_last_value,
+    stop=tenacity.stop_after_attempt(3)
+)
 def delete_a_network(base, network_id, ignore_missing=False,
                      wait_timeout=None):
     """Utility function that deletes a Neutron network."""
-
     res = base.network_client.delete_obj('networks', network_id)
     if res['status'] == 404:
-        if ignore_missing is True:
+        if ignore_missing:
             return
         raise exceptions.NotFound()
 
@@ -594,12 +602,17 @@ def create_a_subnet(base, network_id, cidr, ip_version=4, name=None):
     return body['body']['id']
 
 
+@tenacity.retry(
+    retry=tenacity.retry_if_exception_type(exceptions.Conflict),
+    wait=tenacity.wait_fixed(5),
+    retry_error_callback=_return_last_value,
+    stop=tenacity.stop_after_attempt(3)
+)
 def delete_a_subnet(base, subnet_id, ignore_missing=False, wait_timeout=None):
     """Utility function that deletes a Neutron subnet."""
-
     res = base.network_client.delete_obj('subnets', subnet_id)
     if res['status'] == 404:
-        if ignore_missing is True:
+        if ignore_missing:
             return
         raise exceptions.NotFound()
 

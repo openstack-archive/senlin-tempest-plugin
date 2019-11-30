@@ -34,19 +34,24 @@ class TestHeatStackCluster(base.BaseSenlinIntegrationNonAdminTest):
         max_size = 3
         metadata = {'k1': 'v1'}
         timeout = 300
-        cluster_id = utils.create_a_cluster(
-            self, self.profile_id, desired_capacity, min_size, max_size,
-            timeout, metadata)
 
-        # Verify creation result
-        cluster = utils.get_a_cluster(self, cluster_id)
-        self.assertIsNotNone(cluster)
-        self.assertEqual(desired_capacity, cluster['desired_capacity'])
-        self.assertEqual(desired_capacity, len(cluster['nodes']))
-        for nid in cluster['nodes']:
-            node = utils.get_a_node(self, nid)
-            self.assertEqual('ACTIVE', node['status'])
-            self.assertEqual(cluster_id, node['cluster_id'])
+        self.cluster_id = None
 
-        # Delete cluster
-        utils.delete_a_cluster(self, cluster_id)
+        try:
+            self.cluster_id = utils.create_a_cluster(
+                self, self.profile_id, desired_capacity, min_size, max_size,
+                timeout, metadata)
+
+            # Verify creation result
+            cluster = utils.get_a_cluster(self, self.cluster_id)
+            self.assertIsNotNone(cluster)
+            self.assertEqual(desired_capacity, cluster['desired_capacity'])
+            self.assertEqual(desired_capacity, len(cluster['nodes']))
+            for nid in cluster['nodes']:
+                node = utils.get_a_node(self, nid)
+                self.assertEqual('ACTIVE', node['status'])
+                self.assertEqual(self.cluster_id, node['cluster_id'])
+        finally:
+            # Delete cluster
+            if self.cluster_id:
+                utils.delete_a_cluster(self, self.cluster_id)

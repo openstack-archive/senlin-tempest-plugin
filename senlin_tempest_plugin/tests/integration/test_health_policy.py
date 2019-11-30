@@ -11,6 +11,7 @@
 # under the License.
 
 from tempest import config
+from tempest.lib.common.utils import data_utils
 from tempest.lib import decorators
 from tempest.lib import exceptions
 import time
@@ -26,10 +27,12 @@ class TestHealthPolicy(base.BaseSenlinIntegrationTest):
     def setUp(self):
         super(TestHealthPolicy, self).setUp()
 
-        spec = utils.create_spec_from_config()
-        spec['properties']['networks'][0]['network'] = 'private-hp'
-        utils.prepare_and_cleanup_for_nova_server(self, "192.168.199.0/24",
-                                                  spec)
+        self.spec = utils.create_spec_from_config(
+            network_name=data_utils.rand_name('tempest-created-network')
+        )
+        utils.prepare_and_cleanup_for_nova_server(
+            self, '192.168.198.0/24', spec=self.spec
+        )
         self.profile_id = utils.create_a_profile(self)
         self.addCleanup(utils.delete_a_profile, self, self.profile_id)
         self.cluster_id = utils.create_a_cluster(self, self.profile_id,

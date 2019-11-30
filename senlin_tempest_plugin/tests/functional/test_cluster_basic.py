@@ -32,33 +32,40 @@ class TestClusterCreateListDelete(base.BaseSenlinFunctionalTest):
         max_size = 3
         metadata = {'k1': 'v1'}
         timeout = 120
-        cluster_id1 = utils.create_a_cluster(
-            self, self.profile_id, desired_capacity, min_size, max_size,
-            timeout, metadata)
 
-        # Verify creation result
-        cluster1 = utils.get_a_cluster(self, cluster_id1)
-        self.assertIsNotNone(cluster1)
-        self.assertEqual(desired_capacity, cluster1['desired_capacity'])
-        self.assertEqual(desired_capacity, len(cluster1['nodes']))
-        self.assertEqual(min_size, cluster1['min_size'])
-        self.assertEqual(max_size, cluster1['max_size'])
-        self.assertEqual(metadata, cluster1['metadata'])
-        self.assertEqual(timeout, cluster1['timeout'])
+        cluster_id1 = None
+        cluster_id2 = None
 
-        # Create another cluster
-        cluster_id2 = utils.create_a_cluster(self, self.profile_id)
+        try:
+            cluster_id1 = utils.create_a_cluster(
+                self, self.profile_id, desired_capacity, min_size, max_size,
+                timeout, metadata)
 
-        # List clusters
-        clusters = utils.list_clusters(self)
-        self.assertIsNotNone(clusters)
-        cluster_ids = [c['id'] for c in clusters]
-        self.assertIn(cluster_id1, cluster_ids)
-        self.assertIn(cluster_id2, cluster_ids)
+            # Verify creation result
+            cluster1 = utils.get_a_cluster(self, cluster_id1)
+            self.assertIsNotNone(cluster1)
+            self.assertEqual(desired_capacity, cluster1['desired_capacity'])
+            self.assertEqual(desired_capacity, len(cluster1['nodes']))
+            self.assertEqual(min_size, cluster1['min_size'])
+            self.assertEqual(max_size, cluster1['max_size'])
+            self.assertEqual(metadata, cluster1['metadata'])
+            self.assertEqual(timeout, cluster1['timeout'])
 
-        # Delete cluster
-        utils.delete_a_cluster(self, cluster_id1)
-        utils.delete_a_cluster(self, cluster_id2)
+            # Create another cluster
+            cluster_id2 = utils.create_a_cluster(self, self.profile_id)
+
+            # List clusters
+            clusters = utils.list_clusters(self)
+            self.assertIsNotNone(clusters)
+            cluster_ids = [c['id'] for c in clusters]
+            self.assertIn(cluster_id1, cluster_ids)
+            self.assertIn(cluster_id2, cluster_ids)
+        finally:
+            # Delete clusters
+            if cluster_id1:
+                utils.delete_a_cluster(self, cluster_id1)
+            if cluster_id2:
+                utils.delete_a_cluster(self, cluster_id2)
 
 
 class TestClusterUpdate(base.BaseSenlinFunctionalTest):

@@ -33,47 +33,54 @@ class TestNodeCreateShowListDelete(base.BaseSenlinFunctionalTest):
         name = data_utils.rand_name('node')
         metadata = {'k1': 'v1'}
         role = 'individual'
-        node_id1 = utils.create_a_node(
-            self, self.profile_id, metadata=metadata, role=role, name=name)
 
-        # Verify creation result
-        node1 = utils.get_a_node(self, node_id1)
-        self.assertIsNotNone(node1)
-        self.assertEqual(name, node1['name'])
-        self.assertEqual(metadata, node1['metadata'])
-        self.assertEqual(role, node1['role'])
-        self.assertEqual('', node1['cluster_id'])
-        self.assertNotIn('details', node1)
+        node_id1 = None
+        node_id2 = None
 
-        # Get node with detail
-        node1 = utils.get_a_node(self, node_id1, show_details=True)
-        self.assertIn('details', node1)
-        self.assertIsNotNone(node1['details'])
+        try:
+            node_id1 = utils.create_a_node(
+                self, self.profile_id, metadata=metadata, role=role, name=name)
 
-        # Create second node with target cluster
-        name = data_utils.rand_name('node')
-        node_id2 = utils.create_a_node(
-            self, self.profile_id, cluster_id=self.cluster_id,
-            metadata=metadata, role=role, name=name)
+            # Verify creation result
+            node1 = utils.get_a_node(self, node_id1)
+            self.assertIsNotNone(node1)
+            self.assertEqual(name, node1['name'])
+            self.assertEqual(metadata, node1['metadata'])
+            self.assertEqual(role, node1['role'])
+            self.assertEqual('', node1['cluster_id'])
+            self.assertNotIn('details', node1)
 
-        # Verify creation result
-        node2 = utils.get_a_node(self, node_id2)
-        self.assertIsNotNone(node2)
-        self.assertEqual(self.cluster_id, node2['cluster_id'])
-        cluster = utils.get_a_cluster(self, self.cluster_id)
-        self.assertIn(node_id2, cluster['nodes'])
+            # Get node with detail
+            node1 = utils.get_a_node(self, node_id1, show_details=True)
+            self.assertIn('details', node1)
+            self.assertIsNotNone(node1['details'])
 
-        # List nodes
-        nodes = utils.list_nodes(self)
-        self.assertIsNotNone(nodes)
-        self.assertEqual(2, len(nodes))
-        node_ids = [n['id'] for n in nodes]
-        self.assertIn(node_id1, node_ids)
-        self.assertIn(node_id2, node_ids)
+            # Create second node with target cluster
+            name = data_utils.rand_name('node')
+            node_id2 = utils.create_a_node(
+                self, self.profile_id, cluster_id=self.cluster_id,
+                metadata=metadata, role=role, name=name)
 
-        # Delete nodes
-        utils.delete_a_node(self, node_id1)
-        utils.delete_a_node(self, node_id2)
+            # Verify creation result
+            node2 = utils.get_a_node(self, node_id2)
+            self.assertIsNotNone(node2)
+            self.assertEqual(self.cluster_id, node2['cluster_id'])
+            cluster = utils.get_a_cluster(self, self.cluster_id)
+            self.assertIn(node_id2, cluster['nodes'])
+
+            # List nodes
+            nodes = utils.list_nodes(self)
+            self.assertIsNotNone(nodes)
+            self.assertEqual(2, len(nodes))
+            node_ids = [n['id'] for n in nodes]
+            self.assertIn(node_id1, node_ids)
+            self.assertIn(node_id2, node_ids)
+        finally:
+            # Delete nodes
+            if node_id1:
+                utils.delete_a_node(self, node_id1)
+            if node_id2:
+                utils.delete_a_node(self, node_id2)
 
 
 class TestNodeUpdate(base.BaseSenlinFunctionalTest):
