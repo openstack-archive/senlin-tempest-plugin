@@ -27,7 +27,7 @@ class TestNodeCreate(base.BaseSenlinAPITest):
             config={'node.name.format': 'test-node'})
         self.addCleanup(utils.delete_a_cluster, self, self.cluster_id)
 
-    @utils.api_microversion('1.12')
+    @utils.api_microversion('1.0')
     @decorators.idempotent_id('14d06753-7f0a-4ad2-84be-37fce7114a8f')
     def test_node_create_all_attrs_defined(self):
         expected_keys = ['cluster_id', 'created_at', 'data', 'domain', 'id',

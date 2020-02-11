@@ -28,7 +28,7 @@ class TestNodeUpdate(base.BaseSenlinAPITest):
                                            role='member')
         self.addCleanup(utils.delete_a_node, self, self.node_id)
 
-    @utils.api_microversion('1.12')
+    @utils.api_microversion('1.0')
     @decorators.idempotent_id('bd8a39bf-eee0-4056-aec0-0d8f8706efea')
     def test_node_update_basic_properties(self):
         # Update basic properties of node

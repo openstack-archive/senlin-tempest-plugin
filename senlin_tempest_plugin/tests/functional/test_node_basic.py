@@ -94,7 +94,7 @@ class TestNodeUpdate(base.BaseSenlinFunctionalTest):
         self.node_id = utils.create_a_node(self, self.profile_id)
         self.addCleanup(utils.delete_a_node, self, self.node_id)
 
-    @utils.api_microversion('1.12')
+    @utils.api_microversion('1.0')
     @decorators.attr(type=['functional'])
     @decorators.idempotent_id('d373fb1d-33a1-434f-a850-fb78eff15d18')
     def test_node_update_basic_properties(self):

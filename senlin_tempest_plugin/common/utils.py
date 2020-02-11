@@ -28,15 +28,42 @@ from senlin_tempest_plugin.common import constants
 CONF = config.CONF
 
 
+def is_version_supported(api_version, version):
+    """Check if a version is supported by the API.
+
+    :param api_version: Reference endpoint API version.
+    :param version: Version to check against API version.
+    :return: boolean if the version is supported.
+    """
+
+    api_split = list(map(int, api_version.split('.')))
+    ver_split = list(map(int, version.split('.')))
+
+    if api_split[0] > ver_split[0] or (
+            api_split[0] == ver_split[0] and api_split[1] >= ver_split[1]):
+        return True
+    return False
+
+
 def api_microversion(api_microversion):
     """Decorator used to specify api_microversion for test."""
     def decorator(func):
         @functools.wraps(func)
         def wrapped(self):
+            if not is_version_supported(self.max_api_version,
+                                        api_microversion):
+                msg = ('This test case uses a client with API version {0}, '
+                       'but Senlin service has max API version {1}.').format(
+                    api_microversion,
+                    self.max_api_version)
+                raise self.skipException(msg)
+
             old = self.client.api_microversion
             self.client.api_microversion = api_microversion
-            func(self)
-            self.client.api_microversion = old
+            try:
+                func(self)
+            finally:
+                self.client.api_microversion = old
         return wrapped
     return decorator
 

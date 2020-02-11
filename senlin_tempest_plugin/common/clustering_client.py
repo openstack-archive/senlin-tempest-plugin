@@ -181,6 +181,25 @@ class ClusteringAPIClient(rest_client.RestClient):
 
         raise Exception('Timeout waiting for deletion.')
 
+    def get_max_api_version(self):
+        resp, body = self.get('/')
+        res = self.get_resp(resp, body)
+
+        # Verify resp of API versions list
+        self.expected_success(300, res['status'])
+
+        versions = res['body']
+
+        # Only version 1.0 API is now supported
+        if (len(versions) != 1 or 'id' not in versions[0] or
+                versions[0]['id'] != '1.0'):
+            raise Exception(versions)
+
+        if 'max_version' not in versions[0]:
+            raise Exception('max_version is missing')
+
+        return versions[0]['max_version']
+
 
 class ClusteringFunctionalClient(ClusteringAPIClient):
     """This is the tempest client for Senlin functional test"""

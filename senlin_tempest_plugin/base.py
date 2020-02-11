@@ -32,6 +32,10 @@ class BaseSenlinTest(test.BaseTestCase):
     }
     default_params_with_timeout_values.update(default_params)
 
+    client = None
+
+    max_api_version = '1.0'
+
     @classmethod
     def skip_checks(cls):
         super(BaseSenlinTest, cls).skip_checks()
@@ -42,3 +46,8 @@ class BaseSenlinTest(test.BaseTestCase):
     @classmethod
     def setup_clients(cls):
         super(BaseSenlinTest, cls).setup_clients()
+
+    @classmethod
+    def resource_setup(cls):
+        super(BaseSenlinTest, cls).resource_setup()
+        cls.max_api_version = cls.client.get_max_api_version()

@@ -26,7 +26,7 @@ class TestNodeShow(base.BaseSenlinAPITest):
         self.node_id = utils.create_a_node(self, profile_id)
         self.addCleanup(utils.delete_a_node, self, self.node_id)
 
-    @utils.api_microversion('1.12')
+    @utils.api_microversion('1.0')
     @decorators.idempotent_id('302372e8-efa2-4348-88dd-8a1829e5e26c')
     def test_node_show(self):
         expected_keys = ['cluster_id', 'created_at', 'data', 'domain',
