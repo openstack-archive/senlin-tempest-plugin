@@ -10,7 +10,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import six
 
 from tempest.lib import decorators
 from tempest.lib import exceptions
@@ -128,17 +127,12 @@ class TestClusterPolicyAttachNegativePolicyNotFound(base.BaseSenlinAPITest):
                                'clusters', self.cluster_id, params)
 
         message = ex.resp_body['error']['message']
-        if six.PY2:
+        if 'required' in str(message):
+            self.assertEqual("'policy_id' is a required property",
+                             str(message))
+        else:
             self.assertIn("Additional properties are not allowed",
                           str(message))
-        else:
-            # Python3 performs validation in unpredictable orders
-            if 'required' in str(message):
-                self.assertEqual("'policy_id' is a required property",
-                                 str(message))
-            else:
-                self.assertIn("Additional properties are not allowed",
-                              str(message))
 
 
 class TestClusterPolicyAttachNegativeNotFound(base.BaseSenlinAPITest):

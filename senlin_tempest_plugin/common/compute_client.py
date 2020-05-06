@@ -14,11 +14,11 @@
 
 from oslo_serialization import jsonutils
 from oslo_utils import timeutils
-from six.moves.urllib import parse as urllib
 from tempest import config
 from tempest.lib.common import rest_client
 from tempest.lib import exceptions
 import time
+from urllib import parse as urllib
 
 CONF = config.CONF
 

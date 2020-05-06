@@ -10,7 +10,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import six
 
 from tempest.lib.common.utils import data_utils
 from tempest.lib import decorators
@@ -68,7 +67,7 @@ class TestNovaServerCluster(base.BaseSenlinIntegrationNonAdminTest):
                 metadata = {
                     'cluster_id': cluster['id'],
                     'cluster_node_id': node['id'],
-                    'cluster_node_index': six.text_type(node['index'])
+                    'cluster_node_index': str(node['index'])
                 }
                 self.assertEqual(metadata, node['details']['metadata'])
         finally:
