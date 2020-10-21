@@ -12,10 +12,10 @@
 # limitations under the License.
 
 import functools
+from http import client as http
+import http.server as BaseHTTPServer
 import os
 import signal
-from six.moves import BaseHTTPServer
-from six.moves import http_client as http
 import tempfile
 import tenacity
 
