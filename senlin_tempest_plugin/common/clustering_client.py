@@ -147,6 +147,15 @@ class ClusteringAPIClient(rest_client.RestClient):
 
         return self.get_resp(resp, body)
 
+    def list_profile_type_operation(self, profile_type, params=None):
+        uri = '{0}/profile-types/{1}/ops'.format(self.version, profile_type)
+        if params:
+            uri += '?{0}'.format(urllib.urlencode(params))
+
+        resp, body = self.get(uri)
+
+        return self.get_resp(resp, body)
+
     def wait_for_status(self, obj_type, obj_id, expected_status, timeout=None):
         if isinstance(expected_status, list):
             expected_status_list = expected_status
