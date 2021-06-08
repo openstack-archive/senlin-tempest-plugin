@@ -20,7 +20,7 @@ CONF = config.CONF
 
 class BaseSenlinTest(test.BaseTestCase):
 
-    credentials = ['primary']
+    credentials = ['primary', 'admin']
 
     default_params = config.service_client_config()
 
