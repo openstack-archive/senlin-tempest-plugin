@@ -13,7 +13,6 @@ __pycache__
 .idea
 .project
 .pydevproject
-.testrepository
 .tox
 .venv
 .DS_Store
