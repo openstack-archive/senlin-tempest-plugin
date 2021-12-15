@@ -40,6 +40,13 @@ class BaseSenlinAPITest(base.BaseSenlinTest):
             **cls.default_params_with_timeout_values
         )
 
+        cls.admin_client = clustering_client.ClusteringAPIClient(
+            cls.os_admin.auth_provider,
+            CONF.clustering.catalog_type,
+            CONF.identity.region,
+            **cls.default_params_with_timeout_values
+        )
+
         cls.compute_client = compute_client.V21ComputeClient(
             cls.os_primary.auth_provider,
             CONF.compute.catalog_type,
