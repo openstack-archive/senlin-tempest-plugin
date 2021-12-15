@@ -29,7 +29,6 @@ class TestActionList(base.BaseSenlinAPITest):
     @decorators.idempotent_id('2e47639b-7f58-4fb4-a147-a8c6bf184e97')
     def test_action_list(self):
         res = self.client.list_objs('actions')
-
         self.assertEqual(200, res['status'])
         self.assertIsNone(res['location'])
         self.assertIsNotNone(res['body'])
@@ -42,3 +41,16 @@ class TestActionList(base.BaseSenlinAPITest):
                         'start_time', 'status', 'status_reason', 'target',
                         'timeout', 'updated_at']:
                 self.assertIn(key, action)
+
+    @decorators.idempotent_id('7cf0b29f-c799-4bac-9e36-57d10f222086')
+    def test_action_list_by_status(self):
+        res = self.client.list_objs(
+            'actions', params={'status': 'SUCCEEDED'})
+
+        self.assertEqual(200, res['status'])
+        self.assertIsNone(res['location'])
+
+        actions = res['body']
+        if res['body']:
+            for action in actions:
+                self.assertEqual('SUCCEEDED', action['status'])
