@@ -23,10 +23,10 @@ class TestReceiverList(base.BaseSenlinAPITest):
         profile_id = utils.create_a_profile(self)
         self.addCleanup(utils.delete_a_profile, self, profile_id)
 
-        cluster_id = utils.create_a_cluster(self, profile_id)
-        self.addCleanup(utils.delete_a_cluster, self, cluster_id)
+        self.cluster_id = utils.create_a_cluster(self, profile_id)
+        self.addCleanup(utils.delete_a_cluster, self, self.cluster_id)
 
-        self.receiver_id = utils.create_a_receiver(self, cluster_id,
+        self.receiver_id = utils.create_a_receiver(self, self.cluster_id,
                                                    'CLUSTER_RESIZE')
         self.addCleanup(self.client.delete_obj, 'receivers', self.receiver_id)
 
@@ -46,3 +46,27 @@ class TestReceiverList(base.BaseSenlinAPITest):
                 self.assertIn(key, receiver)
             ids.append(receiver['id'])
         self.assertIn(self.receiver_id, ids)
+
+    @decorators.idempotent_id('0fb57c71-6f66-d18b-1df9-addc387eaee1')
+    def test_receiver_list_by_cluster(self):
+        res = self.client.list_objs('receivers',
+                                    params={'cluster_id': self.cluster_id})
+
+        self.assertEqual(200, res['status'])
+        self.assertIsNone(res['location'])
+        self.assertIsNotNone(res['body'])
+        receivers = res['body']
+        for receiver in receivers:
+            self.assertEqual(self.cluster_id, receiver['cluster_id'])
+
+    @decorators.idempotent_id('16de0713-b183-df98-e992-0fda71577bad')
+    def test_receiver_list_by_action(self):
+        res = self.client.list_objs('receivers',
+                                    params={'action': 'CLUSTER_RESIZE'})
+
+        self.assertEqual(200, res['status'])
+        self.assertIsNone(res['location'])
+        self.assertIsNotNone(res['body'])
+        receivers = res['body']
+        for receiver in receivers:
+            self.assertEqual('CLUSTER_RESIZE', receiver['action'])
