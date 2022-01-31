@@ -73,6 +73,25 @@ class TestReceiverCreateNegativeBadRequest(base.BaseSenlinAPITest):
                           self.client.create_obj,
                           'receivers', params)
 
+    @decorators.attr(type=['negative'])
+    @decorators.idempotent_id('447fbd0a-f222-821c-d2e5-64c2bbf53598')
+    def test_receiver_create_name_length_out(self):
+        # receiver name length out 255 in request data
+        params = {
+            'receive': {
+                'name': 'z' * 256,
+                'cluster_id': 'CLUSTER_ID',
+                'type': 'webhook',
+                'action': 'CLUSTER_SCALE_IN',
+                'params': {"count": 5}
+            }
+        }
+
+        # Verify badrequest exception(400) is raised.
+        self.assertRaises(exceptions.BadRequest,
+                          self.client.create_obj,
+                          'receivers', params)
+
 
 class TestReceiverCreateNegativeInvalidAction(base.BaseSenlinAPITest):
 
