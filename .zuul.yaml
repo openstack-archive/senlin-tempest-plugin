@@ -5,9 +5,10 @@
     check:
       jobs:
         - senlin-dsvm-tempest-py3-api
+        - senlin-dsvm-tempest-py3-api-xena
+        - senlin-dsvm-tempest-py3-api-wallaby
+        - senlin-dsvm-tempest-py3-api-victoria
         - senlin-dsvm-tempest-py3-api-ussuri
-        - senlin-dsvm-tempest-py3-api-train
-        - senlin-dsvm-tempest-py3-api-stein
         - senlin-tempest-api-ipv6-only
         - senlin-dsvm-tempest-py3-functional
         - senlin-dsvm-tempest-py3-integration:
@@ -20,22 +21,21 @@
         - senlin-dsvm-tempest-py3-functional
 
 - job:
+    name: senlin-dsvm-tempest-py3-api-xena
+    parent: senlin-dsvm-tempest-py3-api
+    override-checkout: stable/xena
+
+- job:
+    name: senlin-dsvm-tempest-py3-api-wallaby
+    parent: senlin-dsvm-tempest-py3-api
+    override-checkout: stable/wallaby
+
+- job:
+    name: senlin-dsvm-tempest-py3-api-victoria
+    parent: senlin-dsvm-tempest-py3-api
+    override-checkout: stable/victoria
+
+- job:
     name: senlin-dsvm-tempest-py3-api-ussuri
     parent: senlin-dsvm-tempest-py3-api
     override-checkout: stable/ussuri
-
-- job:
-    name: senlin-dsvm-tempest-py3-api-train
-    parent: senlin-dsvm-tempest-py3-api
-    override-checkout: stable/train
-    vars:
-      devstack_localrc:
-        USE_PYTHON3: True
-
-- job:
-    name: senlin-dsvm-tempest-py3-api-stein
-    parent: senlin-dsvm-tempest-py3-api
-    override-checkout: stable/stein
-    vars:
-      devstack_localrc:
-        USE_PYTHON3: True
