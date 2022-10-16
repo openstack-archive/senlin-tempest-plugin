@@ -1,4 +1,5 @@
 - project:
+    queue: senlin
     templates:
       - check-requirements
       - tempest-plugin-jobs
@@ -13,7 +14,6 @@
         - senlin-dsvm-tempest-py3-integration:
             voting: false
     gate:
-      queue: senlin
       jobs:
         - senlin-dsvm-tempest-py3-api
         - senlin-tempest-api-ipv6-only
@@ -22,14 +22,17 @@
 - job:
     name: senlin-dsvm-tempest-py3-api-yoga
     parent: senlin-dsvm-tempest-py3-api
+    nodeset: openstack-single-node-focal
     override-checkout: stable/yoga
 
 - job:
     name: senlin-dsvm-tempest-py3-api-xena
     parent: senlin-dsvm-tempest-py3-api
+    nodeset: openstack-single-node-focal
     override-checkout: stable/xena
 
 - job:
     name: senlin-dsvm-tempest-py3-api-wallaby
     parent: senlin-dsvm-tempest-py3-api
+    nodeset: openstack-single-node-focal
     override-checkout: stable/wallaby
