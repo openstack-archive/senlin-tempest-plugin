@@ -6,6 +6,7 @@
     check:
       jobs:
         - senlin-dsvm-tempest-py3-api
+        - senlin-dsvm-tempest-py3-api-2023-1
         - senlin-dsvm-tempest-py3-api-zed
         - senlin-dsvm-tempest-py3-api-yoga
         - senlin-dsvm-tempest-py3-api-xena
@@ -19,6 +20,12 @@
         - senlin-dsvm-tempest-py3-api
         - senlin-tempest-api-ipv6-only
         - senlin-dsvm-tempest-py3-functional
+
+- job:
+    name: senlin-dsvm-tempest-py3-api-2023-1
+    parent: senlin-dsvm-tempest-py3-api
+    nodeset: openstack-single-node-jammy
+    override-checkout: stable/2023.1
 
 - job:
     name: senlin-dsvm-tempest-py3-api-zed
