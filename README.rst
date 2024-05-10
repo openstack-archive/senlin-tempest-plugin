@@ -1,46 +1,10 @@
-========================
-Team and repository tags
-========================
+This project is no longer maintained.
 
-.. image:: https://governance.openstack.org/tc/badges/senlin.svg
-    :target: https://governance.openstack.org/tc/reference/tags/index.html
+The contents of this repository are still available in the Git
+source code management system.  To see the contents of this
+repository before it reached its end of life, please check out the
+previous commit with "git checkout HEAD^1".
 
-.. Change things from this point on
-
-==============================
-Tempest integration of Senlin
-==============================
-
-This project contains the Tempest plugin for the Senlin project for
-OpenStack Clustering.
-
-For more information about Senlin see:
-https://docs.openstack.org/senlin/latest/
-
-For more information about Tempest plugins see:
-https://docs.openstack.org/tempest/latest/plugin.html
-
-* Free software: Apache license
-* Source: https://opendev.org/openstack/senlin-tempest-plugin
-
-Installing
-----------
-
-Clone this repository to the destination machine, and call from the tempest repo::
-
-    $ tox -e venv-tempest -- pip install (path to the senlin-tempest-plugin directory)
-
-Running the tests
------------------
-
-To run all the tests from this plugin, call from the tempest repo::
-
-    $ tox -e all -- senlin_tempest_plugin
-
-To run a single test case, call with full path, for example::
-
-    $ tox -e all -- senlin_tempest_plugin.tests.api.policies.test_policy_update.TestPolicyUpdate.test_policy_update
-
-To retrieve a list of all tempest tests, run::
-
-    $ testr list-tests
+For any further questions, please email
+openstack-discuss@lists.openstack.org or join #openstack-dev on
+OFTC.
